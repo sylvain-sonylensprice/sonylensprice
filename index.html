@@ -4,15 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SonyLensPrice - Comparateur d'objectifs photo Sony & Tiers (DXOMark)</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-950 text-gray-100 min-h-screen font-sans flex flex-col justify-between">
 
     <div>
-        <!-- En-tête -->
         <header class="border-b border-gray-800 bg-gray-900/50 backdrop-blur sticky top-0 z-20">
             <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
                 <h1 class="text-xl font-bold tracking-tight text-orange-500">SonyLens<span class="text-white">Price</span></h1>
@@ -20,10 +17,8 @@
             </div>
         </header>
 
-        <!-- Contenu principal -->
         <main class="max-w-7xl mx-auto px-4 py-8">
             
-            <!-- Barre de recherche, filtres et sélecteur de période globale -->
             <div class="mb-8 flex flex-col lg:flex-row gap-4 justify-between items-center">
                 <div class="w-full lg:w-72">
                     <input type="text" id="searchInput" placeholder="Rechercher (ex: Sigma, SEL2470)..." 
@@ -31,7 +26,6 @@
                 </div>
                 
                 <div class="flex flex-wrap gap-4 w-full lg:w-auto justify-between lg:justify-end items-center">
-                    <!-- Sélecteur de période pour les graphiques -->
                     <div class="flex items-center gap-2 bg-gray-900 px-3 py-1.5 border border-gray-800 rounded-lg text-xs">
                         <span class="text-gray-400 font-medium">Période :</span>
                         <select id="globalPeriodSelect" onchange="changeGlobalPeriod(this.value)" class="bg-gray-950 text-orange-400 font-semibold border border-gray-800 rounded px-2 py-1 focus:outline-none focus:border-orange-500">
@@ -42,30 +36,24 @@
                         </select>
                     </div>
 
-                    <!-- Filtres par Type -->
                     <div class="flex gap-1.5 bg-gray-900 p-1 border border-gray-800 rounded-lg">
                         <button onclick="filterType('all')" id="btn-type-all" class="px-3 py-1.5 text-xs bg-gray-800 text-white rounded-md transition font-medium">Tous types</button>
                         <button onclick="filterType('zoom')" id="btn-type-zoom" class="px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition">Zooms</button>
                         <button onclick="filterType('prime')" id="btn-type-prime" class="px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition">Fixes</button>
                     </div>
 
-                    <!-- Multi-sélection par Marques -->
-                    <div class="flex items-center gap-3 bg-gray-900 px-3 py-1.5 border border-gray-800 rounded-lg text-xs">
+                    <div class="flex items-center gap-3 bg-gray-900 px-3 py-1.5 border border-gray-800 rounded-lg text-xs flex-wrap">
                         <span class="text-gray-400 font-medium">Marques :</span>
-                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200">
-                            <input type="checkbox" value="Sony" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Sony
-                        </label>
-                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200">
-                            <input type="checkbox" value="Sigma" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Sigma
-                        </label>
-                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200">
-                            <input type="checkbox" value="Tamron" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Tamron
-                        </label>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200"><input type="checkbox" value="Sony" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Sony</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200"><input type="checkbox" value="Sigma" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Sigma</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200"><input type="checkbox" value="Tamron" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Tamron</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200"><input type="checkbox" value="Samyang" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Samyang</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200"><input type="checkbox" value="Viltrox" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Viltrox</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200"><input type="checkbox" value="Laowa" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Laowa</label>
                     </div>
                 </div>
             </div>
 
-            <!-- Tableau des objectifs -->
             <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-xl mb-12">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse min-w-[1200px]">
@@ -111,13 +99,11 @@
                             </tr>
                         </thead>
                         <tbody id="lensTableBody" class="divide-y divide-gray-800 text-sm">
-                            <!-- Les lignes seront injectées par JavaScript -->
-                        </tbody>
+                            </tbody>
                     </table>
                 </div>
             </div>
 
-            <!-- Section Abonnement / Alertes -->
             <section class="bg-gray-900 border border-gray-800 rounded-xl p-6 sm:p-8 max-w-2xl mx-auto text-center shadow-xl">
                 <h2 class="text-lg font-bold text-white mb-2">Restez informé des nouveaux tests & baisses de prix</h2>
                 <p class="text-xs text-gray-400 mb-6">Recevez une alerte e-mail dès qu'un nouvel objectif est testé par DXOMark ou qu'une baisse majeure est détectée.</p>
@@ -134,121 +120,12 @@
         </main>
     </div>
 
-    <!-- Pied de page -->
     <footer class="border-t border-gray-800 bg-gray-900/30 text-center py-6 text-xs text-gray-500 mt-12">
         SonyLensPrice — Données indicatives basées sur les protocoles DXOMark.
     </footer>
 
-    <!-- Script de gestion -->
     <script>
-        const lenses = [
-            { 
-                name: "Sony FE 24-70mm f/2.8 GM II", 
-                brand: "Sony",
-                ref: "SEL2470GM2",
-                type: "zoom", 
-                aperture: "f/2.8", 
-                dxoScore: 37,
-                dxoQual: "Exceptionnel",
-                dxoLink: "https://www.dxomark.com",
-                newPrice: "2 299 €",
-                newPriceVal: 2299,
-                usedPrice: "Dès 1 989 €",
-                usedPriceVal: 1989,
-                usedState: "Très bon état",
-                historyData: {
-                    "1M": { labels: ['S1 (Juil 2026)', 'S2 (Juil 2026)', 'S3 (Août 2026)', 'S4 (Août 2026)'], prices: [2349, 2320, 2299, 2299] },
-                    "6M": { labels: ['Mars 2026', 'Avril 2026', 'Mai 2026', 'Juin 2026', 'Juil 2026', 'Août 2026'], prices: [2399, 2350, 2349, 2320, 2299, 2299] },
-                    "1Y": { labels: ['Août 2025', 'Nov 2025', 'Fév 2026', 'Mai 2026', 'Août 2026'], prices: [2499, 2450, 2399, 2349, 2299] },
-                    "ALL": { labels: ['2022 (Lancement)', '2023', '2024', '2025', '2026'], prices: [2599, 2499, 2399, 2349, 2299] }
-                }
-            },
-            { 
-                name: "Sigma 24-70mm f/2.8 DG DN Art II", 
-                brand: "Sigma",
-                ref: "303969",
-                type: "zoom", 
-                aperture: "f/2.8", 
-                dxoScore: 35,
-                dxoQual: "Remarquable",
-                dxoLink: "https://www.dxomark.com",
-                newPrice: "1 349 €",
-                newPriceVal: 1349,
-                usedPrice: "Dès 1 150 €",
-                usedPriceVal: 1150,
-                usedState: "Comme neuf",
-                historyData: {
-                    "1M": { labels: ['S1 (Juil 2026)', 'S2 (Juil 2026)', 'S3 (Août 2026)', 'S4 (Août 2026)'], prices: [1379, 1349, 1349, 1349] },
-                    "6M": { labels: ['Mars 2026', 'Avril 2026', 'Mai 2026', 'Juin 2026', 'Juil 2026', 'Août 2026'], prices: [1399, 1389, 1379, 1350, 1349, 1349] },
-                    "1Y": { labels: ['Août 2025', 'Nov 2025', 'Fév 2026', 'Mai 2026', 'Août 2026'], prices: [1449, 1419, 1399, 1379, 1349] },
-                    "ALL": { labels: ['2023 (Lancement)', '2024', '2025', '2026'], prices: [1499, 1449, 1399, 1349] }
-                }
-            },
-            { 
-                name: "Tamron 28-75mm f/2.8 Di III VXD G2", 
-                brand: "Tamron",
-                ref: "A063",
-                type: "zoom", 
-                aperture: "f/2.8", 
-                dxoScore: 34,
-                dxoQual: "Très bon",
-                dxoLink: "https://www.dxomark.com",
-                newPrice: "899 €",
-                newPriceVal: 899,
-                usedPrice: "Dès 750 €",
-                usedPriceVal: 750,
-                usedState: "Bon état",
-                historyData: {
-                    "1M": { labels: ['S1 (Juil 2026)', 'S2 (Juil 2026)', 'S3 (Août 2026)', 'S4 (Août 2026)'], prices: [919, 899, 899, 899] },
-                    "6M": { labels: ['Mars 2026', 'Avril 2026', 'Mai 2026', 'Juin 2026', 'Juil 2026', 'Août 2026'], prices: [949, 929, 919, 899, 899, 899] },
-                    "1Y": { labels: ['Août 2025', 'Nov 2025', 'Fév 2026', 'Mai 2026', 'Août 2026'], prices: [979, 959, 949, 919, 899] },
-                    "ALL": { labels: ['2021 (Lancement)', '2023', '2024', '2025', '2026'], prices: [999, 979, 949, 919, 899] }
-                }
-            },
-            { 
-                name: "Sony FE 50mm f/1.4 GM", 
-                brand: "Sony",
-                ref: "SEL50F14GM",
-                type: "prime", 
-                aperture: "f/1.4", 
-                dxoScore: 42,
-                dxoQual: "Exceptionnel",
-                dxoLink: "https://www.dxomark.com",
-                newPrice: "1 599 €",
-                newPriceVal: 1599,
-                usedPrice: "Dès 1 390 €",
-                usedPriceVal: 1390,
-                usedState: "Comme neuf",
-                historyData: {
-                    "1M": { labels: ['S1 (Juil 2026)', 'S2 (Juil 2026)', 'S3 (Août 2026)', 'S4 (Août 2026)'], prices: [1649, 1599, 1599, 1599] },
-                    "6M": { labels: ['Mars 2026', 'Avril 2026', 'Mai 2026', 'Juin 2026', 'Juil 2026', 'Août 2026'], prices: [1699, 1679, 1649, 1620, 1599, 1599] },
-                    "1Y": { labels: ['Août 2025', 'Nov 2025', 'Fév 2026', 'Mai 2026', 'Août 2026'], prices: [1749, 1699, 1699, 1649, 1599] },
-                    "ALL": { labels: ['2023 (Lancement)', '2024', '2025', '2026'], prices: [1799, 1749, 1699, 1599] }
-                }
-            },
-            { 
-                name: "Sigma 85mm f/1.4 DG DN Art", 
-                brand: "Sigma",
-                ref: "316969",
-                type: "prime", 
-                aperture: "f/1.4", 
-                dxoScore: 44,
-                dxoQual: "Exceptionnel",
-                dxoLink: "https://www.dxomark.com",
-                newPrice: "1 149 €",
-                newPriceVal: 1149,
-                usedPrice: "Dès 980 €",
-                usedPriceVal: 980,
-                usedState: "Très bon état",
-                historyData: {
-                    "1M": { labels: ['S1 (Juil 2026)', 'S2 (Juil 2026)', 'S3 (Août 2026)', 'S4 (Août 2026)'], prices: [1169, 1149, 1149, 1149] },
-                    "6M": { labels: ['Mars 2026', 'Avril 2026', 'Mai 2026', 'Juin 2026', 'Juil 2026', 'Août 2026'], prices: [1199, 1189, 1169, 1150, 1149, 1149] },
-                    "1Y": { labels: ['Août 2025', 'Nov 2025', 'Fév 2026', 'Mai 2026', 'Août 2026'], prices: [1249, 1219, 1199, 1169, 1149] },
-                    "ALL": { labels: ['2020 (Lancement)', '2022', '2024', '2026'], prices: [1299, 1249, 1199, 1149] }
-                }
-            }
-        ];
-
+        let lenses = [];
         const tableBody = document.getElementById('lensTableBody');
         const searchInput = document.getElementById('searchInput');
         let currentType = 'all';
@@ -256,190 +133,6 @@
         let currentSortDirection = 'asc';
         let currentPeriod = '6M';
 
-        function changeGlobalPeriod(period) {
-            currentPeriod = period;
-            applyFilters();
-        }
-
-        function displayLenses(data) {
-            tableBody.innerHTML = '';
-            if (data.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-gray-500">Aucun objectif trouvé avec ces filtres</td></tr>`;
-                return;
-            }
-            
-            data.forEach((lens, index) => {
-                const periodInfo = lens.historyData[currentPeriod] || lens.historyData['6M'];
-                const prices = periodInfo.prices;
-                const minP = Math.min(...prices);
-                const maxP = Math.max(...prices);
-
-                const row = document.createElement('tr');
-                row.className = "hover:bg-gray-800/50 transition";
-                row.innerHTML = `
-                    <td class="p-4">
-                        <div class="font-medium text-white">${lens.name}</div>
-                        <div class="text-xs text-gray-400 font-mono mt-0.5">${lens.ref}</div>
-                    </td>
-                    <td class="p-4">
-                        <span class="px-2.5 py-1 text-xs rounded-full font-medium ${lens.brand === 'Sony' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20' : lens.brand === 'Sigma' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'}">${lens.brand}</span>
-                    </td>
-                    <td class="p-4"><span class="px-2.5 py-1 text-xs rounded-full bg-gray-800 text-gray-300">${lens.type === 'zoom' ? 'Zoom' : 'Fixe'}</span></td>
-                    <td class="p-4 text-gray-300 font-medium">${lens.aperture}</td>
-                    <td class="p-4">
-                        <div class="flex items-center gap-2">
-                            <span class="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold text-xs rounded">${lens.dxoScore}/50</span>
-                            <a href="${lens.dxoLink}" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-300 font-medium hover:text-orange-400 hover:underline inline-flex items-center gap-1">
-                                ${lens.dxoQual} 
-                                <svg class="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                            </a>
-                        </div>
-                    </td>
-                    <td class="p-4 font-semibold text-orange-400">${lens.newPrice}</td>
-                    <td class="p-4">
-                        <div class="text-sky-400 font-medium">${lens.usedPrice}</div>
-                        <div class="text-[11px] text-gray-400">${lens.usedState}</div>
-                    </td>
-                    <td class="p-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-28 h-12">
-                                <canvas id="chart-${index}"></canvas>
-                            </div>
-                            <div class="text-xs space-y-0.5 whitespace-nowrap">
-                                <div class="text-emerald-400">Min: <span class="font-medium">${minP} €</span></div>
-                                <div class="text-rose-400">Max: <span class="font-medium">${maxP} €</span></div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="p-4 text-right">
-                        <button onclick="alert('Détails DXO & prix pour ${lens.name}')" class="px-3 py-1.5 bg-gray-800 hover:bg-orange-600 hover:text-white rounded-lg transition text-xs font-medium">Détails</button>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-
-                setTimeout(() => {
-                    const canvasEl = document.getElementById(`chart-${index}`);
-                    if (canvasEl) {
-                        const ctx = canvasEl.getContext('2d');
-                        new Chart(ctx, {
-                            type: 'line',
-                            data: {
-                                labels: periodInfo.labels,
-                                datasets: [{
-                                    data: periodInfo.prices,
-                                    borderColor: '#f97316',
-                                    borderWidth: 2,
-                                    pointRadius: 2,
-                                    pointBackgroundColor: '#f97316',
-                                    tension: 0.3,
-                                    fill: true,
-                                    backgroundColor: 'rgba(249, 115, 22, 0.05)'
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                plugins: { 
-                                    legend: { display: false }, 
-                                    tooltip: { 
-                                        enabled: true,
-                                        callbacks: {
-                                            title: function(context) { return 'Date : ' + context[0].label; },
-                                            label: function(context) { return ' Prix : ' + context.raw + ' €'; }
-                                        }
-                                    } 
-                                },
-                                scales: {
-                                    x: { display: false },
-                                    y: { display: false }
-                                }
-                            }
-                        });
-                    }
-                }, 0);
-            });
-        }
-
-        window.filterType = function(type) {
-            currentType = type;
-            document.querySelectorAll('[id^="btn-type-"]').forEach(btn => {
-                btn.className = "px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition";
-            });
-            document.getElementById(`btn-type-${type}`).className = "px-3 py-1.5 text-xs bg-gray-800 text-white rounded-md transition font-medium";
-            applyFilters();
-        }
-
-        window.sortTable = function(column) {
-            if (currentSortColumn === column) {
-                currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
-            } else {
-                currentSortColumn = column;
-                currentSortDirection = 'asc';
-            }
-
-            document.querySelectorAll('[id^="sort-icon-"]').forEach(el => {
-                el.textContent = '⇅';
-                el.className = 'text-gray-600';
-            });
-
-            const activeIcon = document.getElementById(`sort-icon-${column}`);
-            if (activeIcon) {
-                activeIcon.textContent = currentSortDirection === 'asc' ? '▲' : '▼';
-                activeIcon.className = 'text-orange-500 font-bold';
-            }
-
-            applyFilters();
-        }
-
-        function applyFilters() {
-            const query = searchInput.value.toLowerCase();
-            const selectedBrands = Array.from(document.querySelectorAll('.brand-checkbox:checked')).map(cb => cb.value);
-
-            let filtered = lenses.filter(lens => {
-                const matchesType = currentType === 'all' || lens.type === currentType;
-                const matchesBrand = selectedBrands.includes(lens.brand);
-                const matchesQuery = lens.name.toLowerCase().includes(query) || 
-                                     lens.ref.toLowerCase().includes(query) || 
-                                     lens.aperture.toLowerCase().includes(query) || 
-                                     lens.dxoScore.toString().toLowerCase().includes(query) ||
-                                     lens.brand.toLowerCase().includes(query);
-                return matchesType && matchesBrand && matchesQuery;
-            });
-
-            if (currentSortColumn) {
-                filtered.sort((a, b) => {
-                    let valA = a[currentSortColumn];
-                    let valB = b[currentSortColumn];
-
-                    if (typeof valA === 'string') {
-                        valA = valA.toLowerCase();
-                        valB = valB.toLowerCase();
-                    }
-
-                    if (valA < valB) return currentSortDirection === 'asc' ? -1 : 1;
-                    if (valA > valB) return currentSortDirection === 'asc' ? 1 : -1;
-                    return 0;
-                });
-            }
-
-            displayLenses(filtered);
-        }
-
-        window.handleSubscribe = function(event) {
-            event.preventDefault();
-            const emailInput = document.getElementById('subscriberEmail');
-            const msg = document.getElementById('subscribeMessage');
-            if(emailInput.value) {
-                msg.classList.remove('hidden');
-                emailInput.value = '';
-                setTimeout(() => {
-                    msg.classList.add('hidden');
-                }, 4000);
-            }
-        }
-
-        searchInput.addEventListener('input', applyFilters);
-        applyFilters();
-    </script>
-</body>
-</html>
+        async function loadDatabase() {
+            try {
+                const response = await fetch('lenses_db.json
