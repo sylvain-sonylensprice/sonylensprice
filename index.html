@@ -133,6 +133,63 @@
         let currentSortDirection = 'asc';
         let currentPeriod = '6M';
 
-        async function loadDatabase() {
+       async function loadDatabase() {
             try {
-                const response = await fetch('lenses_db.json
+                const response = await fetch('lenses_db.json');
+                if (!response.ok) throw new Error("Impossible de charger la base de données");
+                lenses = await response.json();
+                renderTable(lenses);
+            } catch (error) {
+                console.error("Erreur:", error);
+                tableBody.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-red-400">Erreur lors du chargement des données.</td></tr>`;
+            }
+        }
+
+        function renderTable(data) {
+            tableBody.innerHTML = '';
+            if (data.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-gray-500">Aucun objectif trouvé.</td></tr>`;
+                return;
+            }
+
+            data.forEach(lens => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-900/50 transition';
+                row.innerHTML = `
+                    <td class="p-4 font-medium text-white">${lens.name || '-'}</td>
+                    <td class="p-4 text-gray-300">${lens.brand || '-'}</td>
+                    <td class="p-4 text-gray-400">${lens.type || '-'}</td>
+                    <td class="p-4 text-gray-300">${lens.aperture || '-'}</td>
+                    <td class="p-4 font-semibold text-orange-400">${lens.dxoScore || '-'}</td>
+                    <td class="p-4 text-gray-200">${lens.newPrice || 'N/C'}</td>
+                    <td class="p-4 text-gray-300">${lens.usedPrice || 'N/C'}</td>
+                    <td class="p-4 text-gray-500">Graphique</td>
+                    <td class="p-4 text-right"><a href="${lens.url || '#'}" target="_blank" class="text-orange-500 hover:text-orange-400 text-xs font-semibold">Voir</a></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function filterType(type) {
+            currentType = type;
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const query = searchInput.value.toLowerCase();
+            const checkedBrands = Array.from(document.querySelectorAll('.brand-checkbox:checked')).map(cb => cb.value);
+
+            const filtered = lenses.filter(lens => {
+                const matchesSearch = (lens.name && lens.name.toLowerCase().includes(query)) || (lens.brand && lens.brand.toLowerCase().includes(query));
+                const matchesType = currentType === 'all' || (lens.type && lens.type.toLowerCase() === currentType);
+                const matchesBrand = checkedBrands.includes(lens.brand);
+                return matchesSearch && matchesType && matchesBrand;
+            });
+
+            renderTable(filtered);
+        }
+
+        searchInput.addEventListener('input', applyFilters);
+
+        // Lancement au chargement de la page
+        loadDatabase();
