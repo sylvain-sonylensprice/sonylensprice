@@ -23,14 +23,25 @@
         <!-- Contenu principal -->
         <main class="max-w-7xl mx-auto px-4 py-8">
             
-            <!-- Barre de recherche et filtres (Type + Multi-marques) -->
+            <!-- Barre de recherche, filtres et sélecteur de période globale -->
             <div class="mb-8 flex flex-col lg:flex-row gap-4 justify-between items-center">
-                <div class="w-full lg:w-80">
+                <div class="w-full lg:w-72">
                     <input type="text" id="searchInput" placeholder="Rechercher (ex: Sigma, SEL2470)..." 
                         class="w-full bg-gray-900 border border-gray-800 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500 transition">
                 </div>
                 
                 <div class="flex flex-wrap gap-4 w-full lg:w-auto justify-between lg:justify-end items-center">
+                    <!-- Sélecteur de période pour les graphiques -->
+                    <div class="flex items-center gap-2 bg-gray-900 px-3 py-1.5 border border-gray-800 rounded-lg text-xs">
+                        <span class="text-gray-400 font-medium">Période :</span>
+                        <select id="globalPeriodSelect" onchange="changeGlobalPeriod(this.value)" class="bg-gray-950 text-orange-400 font-semibold border border-gray-800 rounded px-2 py-1 focus:outline-none focus:border-orange-500">
+                            <option value="1M">1 mois</option>
+                            <option value="6M" selected>6 mois</option>
+                            <option value="1Y">1 an</option>
+                            <option value="ALL">Depuis l'origine</option>
+                        </select>
+                    </div>
+
                     <!-- Filtres par Type -->
                     <div class="flex gap-1.5 bg-gray-900 p-1 border border-gray-800 rounded-lg">
                         <button onclick="filterType('all')" id="btn-type-all" class="px-3 py-1.5 text-xs bg-gray-800 text-white rounded-md transition font-medium">Tous types</button>
@@ -95,7 +106,7 @@
                                         Occasion <span id="sort-icon-usedPriceVal" class="text-gray-600">⇅</span>
                                     </div>
                                 </th>
-                                <th class="p-4 w-64">Price History (Min / Max)</th>
+                                <th class="p-4 w-72">Évolution & Historique Prix</th>
                                 <th class="p-4 text-right">Action</th>
                             </tr>
                         </thead>
@@ -130,6 +141,7 @@
 
     <!-- Script de gestion -->
     <script>
+        // Données enrichies avec plusieurs jeux de données selon la période choisie (1M, 6M, 1Y, ALL)
         const lenses = [
             { 
                 name: "Sony FE 24-70mm f/2.8 GM II", 
@@ -145,10 +157,12 @@
                 usedPrice: "Dès 1 989 €",
                 usedPriceVal: 1989,
                 usedState: "Très bon état",
-                historyLabels: ['Jan', 'Fév', 'Mar', 'Avr'],
-                priceHistory: [2499, 2399, 2350, 2299],
-                minPrice: "2 299 € (Avr)",
-                maxPrice: "2 499 € (Jan)"
+                historyData: {
+                    "1M": { labels: ['S1', 'S2', 'S3', 'S4'], prices: [2349, 2320, 2299, 2299] },
+                    "6M": { labels: ['Nov', 'Déc', 'Jan', 'Fév', 'Mar', 'Avr'], prices: [2399, 2350, 2349, 2320, 2299, 2299] },
+                    "1Y": { labels: ['Mai', 'Août', 'Nov', 'Fév', 'Avr'], prices: [2499, 2450, 2399, 2349, 2299] },
+                    "ALL": { labels: ['2022 (Lancement)', '2023', '2024', '2025', '2026'], prices: [2599, 2499, 2399, 2349, 2299] }
+                }
             },
             { 
                 name: "Sigma 24-70mm f/2.8 DG DN Art II", 
@@ -164,10 +178,12 @@
                 usedPrice: "Dès 1 150 €",
                 usedPriceVal: 1150,
                 usedState: "Comme neuf",
-                historyLabels: ['Jan', 'Fév', 'Mar', 'Avr'],
-                priceHistory: [1399, 1379, 1349, 1349],
-                minPrice: "1 349 € (Mar)",
-                maxPrice: "1 399 € (Jan)"
+                historyData: {
+                    "1M": { labels: ['S1', 'S2', 'S3', 'S4'], prices: [1379, 1349, 1349, 1349] },
+                    "6M": { labels: ['Nov', 'Déc', 'Jan', 'Fév', 'Mar', 'Avr'], prices: [1399, 1389, 1379, 1350, 1349, 1349] },
+                    "1Y": { labels: ['Mai', 'Août', 'Nov', 'Fév', 'Avr'], prices: [1449, 1419, 1399, 1379, 1349] },
+                    "ALL": { labels: ['2023 (Lancement)', '2024', '2025', '2026'], prices: [1499, 1449, 1399, 1349] }
+                }
             },
             { 
                 name: "Tamron 28-75mm f/2.8 Di III VXD G2", 
@@ -183,10 +199,12 @@
                 usedPrice: "Dès 750 €",
                 usedPriceVal: 750,
                 usedState: "Bon état",
-                historyLabels: ['Jan', 'Fév', 'Mar', 'Avr'],
-                priceHistory: [949, 919, 899, 899],
-                minPrice: "899 € (Mar)",
-                maxPrice: "949 € (Jan)"
+                historyData: {
+                    "1M": { labels: ['S1', 'S2', 'S3', 'S4'], prices: [919, 899, 899, 899] },
+                    "6M": { labels: ['Nov', 'Déc', 'Jan', 'Fév', 'Mar', 'Avr'], prices: [949, 929, 919, 899, 899, 899] },
+                    "1Y": { labels: ['Mai', 'Août', 'Nov', 'Fév', 'Avr'], prices: [979, 959, 949, 919, 899] },
+                    "ALL": { labels: ['2021 (Lancement)', '2023', '2024', '2025', '2026'], prices: [999, 979, 949, 919, 899] }
+                }
             },
             { 
                 name: "Sony FE 50mm f/1.4 GM", 
@@ -202,10 +220,12 @@
                 usedPrice: "Dès 1 390 €",
                 usedPriceVal: 1390,
                 usedState: "Comme neuf",
-                historyLabels: ['Jan', 'Fév', 'Mar', 'Avr'],
-                priceHistory: [1699, 1649, 1599, 1599],
-                minPrice: "1 599 € (Mar)",
-                maxPrice: "1 699 € (Jan)"
+                historyData: {
+                    "1M": { labels: ['S1', 'S2', 'S3', 'S4'], prices: [1649, 1599, 1599, 1599] },
+                    "6M": { labels: ['Nov', 'Déc', 'Jan', 'Fév', 'Mar', 'Avr'], prices: [1699, 1679, 1649, 1620, 1599, 1599] },
+                    "1Y": { labels: ['Mai', 'Août', 'Nov', 'Fév', 'Avr'], prices: [1749, 1699, 1699, 1649, 1599] },
+                    "ALL": { labels: ['2023 (Lancement)', '2024', '2025', '2026'], prices: [1799, 1749, 1699, 1599] }
+                }
             },
             { 
                 name: "Sigma 85mm f/1.4 DG DN Art", 
@@ -221,10 +241,12 @@
                 usedPrice: "Dès 980 €",
                 usedPriceVal: 980,
                 usedState: "Très bon état",
-                historyLabels: ['Jan', 'Fév', 'Mar', 'Avr'],
-                priceHistory: [1199, 1169, 1149, 1149],
-                minPrice: "1 149 € (Mar)",
-                maxPrice: "1 199 € (Jan)"
+                historyData: {
+                    "1M": { labels: ['S1', 'S2', 'S3', 'S4'], prices: [1169, 1149, 1149, 1149] },
+                    "6M": { labels: ['Nov', 'Déc', 'Jan', 'Fév', 'Mar', 'Avr'], prices: [1199, 1189, 1169, 1150, 1149, 1149] },
+                    "1Y": { labels: ['Mai', 'Août', 'Nov', 'Fév', 'Avr'], prices: [1249, 1219, 1199, 1169, 1149] },
+                    "ALL": { labels: ['2020 (Lancement)', '2022', '2024', '2026'], prices: [1299, 1249, 1199, 1149] }
+                }
             }
         ];
 
@@ -233,6 +255,12 @@
         let currentType = 'all';
         let currentSortColumn = '';
         let currentSortDirection = 'asc';
+        let currentPeriod = '6M'; // Période par défaut
+
+        function changeGlobalPeriod(period) {
+            currentPeriod = period;
+            applyFilters();
+        }
 
         function displayLenses(data) {
             tableBody.innerHTML = '';
@@ -242,6 +270,11 @@
             }
             
             data.forEach((lens, index) => {
+                const periodInfo = lens.historyData[currentPeriod] || lens.historyData['6M'];
+                const prices = periodInfo.prices;
+                const minP = Math.min(...prices);
+                const maxP = Math.max(...prices);
+
                 const row = document.createElement('tr');
                 row.className = "hover:bg-gray-800/50 transition";
                 row.innerHTML = `
@@ -274,8 +307,8 @@
                                 <canvas id="chart-${index}"></canvas>
                             </div>
                             <div class="text-xs space-y-0.5 whitespace-nowrap">
-                                <div class="text-emerald-400">Min: <span class="font-medium">${lens.minPrice}</span></div>
-                                <div class="text-rose-400">Max: <span class="font-medium">${lens.maxPrice}</span></div>
+                                <div class="text-emerald-400">Min: <span class="font-medium">${minP} €</span></div>
+                                <div class="text-rose-400">Max: <span class="font-medium">${maxP} €</span></div>
                             </div>
                         </div>
                     </td>
@@ -285,7 +318,7 @@
                 `;
                 tableBody.appendChild(row);
 
-                // Génération du mini-graphique
+                // Génération du mini-graphique dynamique selon la période
                 setTimeout(() => {
                     const canvasEl = document.getElementById(`chart-${index}`);
                     if (canvasEl) {
@@ -293,9 +326,9 @@
                         new Chart(ctx, {
                             type: 'line',
                             data: {
-                                labels: lens.historyLabels,
+                                labels: periodInfo.labels,
                                 datasets: [{
-                                    data: lens.priceHistory,
+                                    data: periodInfo.prices,
                                     borderColor: '#f97316',
                                     borderWidth: 2,
                                     pointRadius: 2,
@@ -313,7 +346,7 @@
                                     tooltip: { 
                                         enabled: true,
                                         callbacks: {
-                                            title: function(context) { return 'Mois : ' + context[0].label; },
+                                            title: function(context) { return 'Date/Point : ' + context[0].label; },
                                             label: function(context) { return ' Prix : ' + context.raw + ' €'; }
                                         }
                                     } 
