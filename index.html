@@ -58,13 +58,48 @@
 
     <!-- Script de gestion des données et du filtre -->
     <script>
-        // Base de données exemple pour commencer
+        // Base de données avec images incluses
         const lenses = [
-            { name: "Sony FE 24-70mm f/2.8 GM II", type: "zoom", aperture: "f/2.8", weight: "695 g", price: "2 299 €" },
-            { name: "Sony FE 50mm f/1.4 GM", type: "prime", aperture: "f/1.4", weight: "516 g", price: "1 599 €" },
-            { name: "Sony FE 70-200mm f/2.8 GM OSS II", type: "zoom", aperture: "f/2.8", weight: "1 045 g", price: "2 999 €" },
-            { name: "Sony FE 35mm f/1.8", type: "prime", aperture: "f/1.8", weight: "281 g", price: "599 €" },
-            { name: "Sony FE 200-600mm f/5.6-6.3 G OSS", type: "zoom", aperture: "f/5.6-6.3", weight: "2 115 g", price: "1 999 €" }
+            { 
+                name: "Sony FE 24-70mm f/2.8 GM II", 
+                type: "zoom", 
+                aperture: "f/2.8", 
+                weight: "695 g", 
+                price: "2 299 €",
+                image: "https://images.unsplash.com/photo-1617005082133-5c5f4093cef9?auto=format&fit=crop&w=150&q=80"
+            },
+            { 
+                name: "Sony FE 50mm f/1.4 GM", 
+                type: "prime", 
+                aperture: "f/1.4", 
+                weight: "516 g", 
+                price: "1 599 €",
+                image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=150&q=80"
+            },
+            { 
+                name: "Sony FE 70-200mm f/2.8 GM OSS II", 
+                type: "zoom", 
+                aperture: "f/2.8", 
+                weight: "1 045 g", 
+                price: "2 999 €",
+                image: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=150&q=80"
+            },
+            { 
+                name: "Sony FE 35mm f/1.8", 
+                type: "prime", 
+                aperture: "f/1.8", 
+                weight: "281 g", 
+                price: "599 €",
+                image: "https://images.unsplash.com/photo-1512790182412-b19e6d62bc39?auto=format&fit=crop&w=150&q=80"
+            },
+            { 
+                name: "Sony FE 200-600mm f/5.6-6.3 G OSS", 
+                type: "zoom", 
+                aperture: "f/5.6-6.3", 
+                weight: "2 115 g", 
+                price: "1 999 €",
+                image: "https://images.unsplash.com/photo-1500634245200-e524fc674c3f?auto=format&fit=crop&w=150&q=80"
+            }
         ];
 
         const tableBody = document.getElementById('lensTableBody');
@@ -82,7 +117,12 @@
                 const row = document.createElement('tr');
                 row.className = "hover:bg-gray-800/50 transition";
                 row.innerHTML = `
-                    <td class="p-4 font-medium text-white">${lens.name}</td>
+                    <td class="p-4">
+                        <div class="flex items-center gap-3">
+                            <img src="${lens.image}" alt="${lens.name}" class="w-10 h-10 object-cover rounded-lg border border-gray-800 bg-gray-800">
+                            <span class="font-medium text-white">${lens.name}</span>
+                        </div>
+                    </td>
                     <td class="p-4"><span class="px-2.5 py-1 text-xs rounded-full ${lens.type === 'zoom' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'}">${lens.type === 'zoom' ? 'Zoom' : 'Focale fixe'}</span></td>
                     <td class="p-4 text-gray-300">${lens.aperture}</td>
                     <td class="p-4 text-gray-300">${lens.weight}</td>
