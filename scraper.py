@@ -2,153 +2,90 @@ from datetime import datetime
 import os
 import json
 import requests
-from bs4 import BeautifulSoup
-
-# Liste des marques tierces et Sony à surveiller sur DXOMark
-BRANDS_TO_SCRAPE = ["sony", "sigma", "tamron", "samyang", "viltrox", "laowa"]
 
 def fetch_amazon_price_via_api(lens_name):
-    """
-    Interroge Rainforest API en testant les différents domaines Amazon européens 
-    (.fr, .de, .it, .es) pour trouver le meilleur prix disponible en euros.
-    """
     api_key = os.environ.get("RAINFOREST_API_KEY")
-    
-    # Valeur par défaut si aucune clé n'est configurée ou en cas de test local
     if not api_key:
-        return {
-            "newPrice": "899 €",
-            "newPriceVal": 899,
-            "usedPrice": "Dès 750 €",
-            "usedPriceVal": 750,
-            "usedState": "Bon état"
-        }
+        print("Erreur : RAINFOREST_API_KEY non trouvée dans les secrets !")
+        return None
 
-    # Domaines prioritaires en euros
-    european_domains = ["amazon.fr", "amazon.de", "amazon.it", "amazon.es"]
-
-    for domain in european_domains:
-        params = {
-            "api_key": api_key,
-            "type": "search",
-            "amazon_domain": domain,
-            "search_term": lens_name
-        }
+    params = {
+        "api_key": api_key,
+        "type": "search",
+        "amazon_domain": "amazon.fr",
+        "search_term": lens_name
+    }
+    
+    try:
+        api_result = requests.get('https://api.rainforestapi.com/request', params=params, timeout=15)
+        data = api_result.json()
         
-        try:
-            api_result = requests.get('https://api.rainforestapi.com/request', params=params, timeout=15)
-            data = api_result.json()
-            
-            if "search_results" in data and len(data["search_results"]) > 0:
-                first_result = data["search_results"][0]
-                if "price" in first_result and "value" in first_result["price"]:
-                    price_val = int(first_result["price"]["value"])
-                    return {
-                        "newPrice": f"{price_val} €",
-                        "newPriceVal": price_val,
-                        "usedPrice": f"Dès {int(price_val * 0.8)} €",
-                        "usedPriceVal": int(price_val * 0.8),
-                        "usedState": "Bon état"
-                    }
-        except Exception as e:
-            print(f"Erreur API pour {domain} avec {lens_name} : {e}")
+        if "search_results" in data and len(data["search_results"]) > 0:
+            first_result = data["search_results"][0]
+            if "price" in first_result and "value" in first_result["price"]:
+                price_val = int(first_result["price"]["value"])
+                return {
+                    "newPrice": f"{price_val} €",
+                    "newPriceVal": price_val,
+                    "usedPrice": f"Dès {int(price_val * 0.8)} €",
+                    "usedPriceVal": int(price_val * 0.8),
+                    "usedState": "Bon état"
+                }
+    except Exception as e:
+        print(f"Erreur API : {e}")
+    return None
 
-    # Valeur par défaut si aucun résultat n'est trouvé sur les stores testés
-    return {
-        "newPrice": "899 €",
-        "newPriceVal": 899,
-        "usedPrice": "Dès 750 €",
-        "usedPriceVal": 750,
-        "usedState": "Bon état"
-    }
-
-def scrape_dxomark_lenses():
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-    }
-    
-    scraped_data = []
-    
-    for brand in BRANDS_TO_SCRAPE:
-        url = f"https://www.dxomark.com/category/lens-reviews/?filter_brand={brand}"
-        try:
-            response = requests.get(url, headers=headers, timeout=10)
-            if response.status_code != 200:
-                continue
-
-            soup = BeautifulSoup(response.text, "html.parser")
-            articles = soup.find_all("div", class_="product-review-item")
-
-            for article in articles:
-                title_elem = article.find("h2")
-                score_elem = article.find("div", class_="score")
-                link_elem = article.find("a")
-
-                if title_elem and score_elem:
-                    name = title_elem.get_text(strip=True)
-                    score_text = score_elem.get_text(strip=True).split("/")[0]
-                    score = int(score_text) if score_text.isdigit() else 0
-                    link = link_elem["href"] if link_elem else ""
-
-                    scraped_data.append({
-                        "name": name,
-                        "brand": brand.capitalize(),
-                        "dxoScore": score,
-                        "dxoLink": link
-                    })
-        except Exception as e:
-            print(f"Erreur DXOMark pour {brand} : {e}")
-
-    return scraped_data
-
-def update_json_database(new_lenses):
+def update_json_database():
     db_file = "lenses_db.json"
+    
+    # On simule un objectif détecté pour tester toute la chaîne de bout en bout
+    test_lens_name = "Sony FE 24-70mm F2.8 GM II"
+    print(f"Recherche du prix pour : {test_lens_name}")
+    
+    pricing = fetch_amazon_price_via_api(test_lens_name)
+    if not pricing:
+        print("Impossible de récupérer le prix via l'API.")
+        return
+
     try:
         with open(db_file, "r", encoding="utf-8") as f:
             database = json.load(f)
-    except FileNotFoundError:
+    except (FileNotFoundError, json.JSONDecodeError):
         database = []
 
-    updated = False
+    # Vérifie si l'objectif y est déjà
     existing_names = {item["name"] for item in database}
     current_date_str = datetime.now().strftime("%B %Y")
 
-    for lens in new_lenses:
-        if lens["name"] not in existing_names:
-            # Récupération automatique du prix via l'API sécurisée multi-domaines
-            pricing = fetch_amazon_price_via_api(lens["name"])
-            
-            new_entry = {
-                "name": lens["name"],
-                "brand": lens["brand"],
-                "ref": "REF-AUTO",
-                "type": "zoom" if any(z in lens["name"].lower() for z in ["zoom", "24-70", "28-75", "70-200"]) else "prime",
-                "aperture": "f/2.8",
-                "dxoScore": lens["dxoScore"],
-                "dxoQual": "Testé",
-                "dxoLink": lens["dxoLink"],
-                "newPrice": pricing["newPrice"],
-                "newPriceVal": pricing["newPriceVal"],
-                "usedPrice": pricing["usedPrice"],
-                "usedPriceVal": pricing["usedPriceVal"],
-                "usedState": pricing["usedState"],
-                "historyData": {
-                    "1M": { "labels": ['S1', 'S2', 'S3', 'S4'], "prices": [pricing["newPriceVal"], pricing["newPriceVal"], pricing["newPriceVal"], pricing["newPriceVal"]] },
-                    "6M": { "labels": [current_date_str], "prices": [pricing["newPriceVal"]] },
-                    "1Y": { "labels": [current_date_str], "prices": [pricing["newPriceVal"]] },
-                    "ALL": { "labels": [current_date_str], "prices": [pricing["newPriceVal"]] }
-                }
+    if test_lens_name not in existing_names:
+        new_entry = {
+            "name": test_lens_name,
+            "brand": "Sony",
+            "ref": "SEL2470GM2",
+            "type": "zoom",
+            "aperture": "f/2.8",
+            "dxoScore": 45,
+            "dxoQual": "Testé",
+            "dxoLink": "https://www.dxomark.com",
+            "newPrice": pricing["newPrice"],
+            "newPriceVal": pricing["newPriceVal"],
+            "usedPrice": pricing["usedPrice"],
+            "usedPriceVal": pricing["usedPriceVal"],
+            "usedState": pricing["usedState"],
+            "historyData": {
+                "1M": { "labels": ['S1', 'S2', 'S3', 'S4'], "prices": [pricing["newPriceVal"], pricing["newPriceVal"], pricing["newPriceVal"], pricing["newPriceVal"]] },
+                "6M": { "labels": [current_date_str], "prices": [pricing["newPriceVal"]] },
+                "1Y": { "labels": [current_date_str], "prices": [pricing["newPriceVal"]] },
+                "ALL": { "labels": [current_date_str], "prices": [pricing["newPriceVal"]] }
             }
-            database.append(new_entry)
-            updated = True
-            print(f"Ajouté : {lens['name']}")
-
-    if updated:
+        }
+        database.append(new_entry)
+        
         with open(db_file, "w", encoding="utf-8") as f:
             json.dump(database, f, ensure_ascii=False, indent=4)
-        print("Base de données mise à jour.")
+        print("Base de données mise à jour avec succès !")
+    else:
+        print("L'objectif est déjà présent dans le fichier JSON.")
 
 if __name__ == "__main__":
-    latest_reviews = scrape_dxomark_lenses()
-    if latest_reviews:
-        update_json_database(latest_reviews)
+    update_json_database()
