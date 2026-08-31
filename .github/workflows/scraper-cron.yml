@@ -25,6 +25,8 @@ jobs:
 
       - name: Exécuter le script de scraping
         run: python scraper.py
+        env:
+          RAINFOREST_API_KEY: ${{ secrets.RAINFOREST_API_KEY }}
 
       - name: Sauvegarder automatiquement le fichier JSON mis à jour
         run: |
