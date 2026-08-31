@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SonyLensPrice - Comparateur d'objectifs photo Sony</title>
-    <!-- Tailwind CSS pour un design rapide et professionnel -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js pour les graphiques d'historique de prix -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-950 text-gray-100 min-h-screen font-sans">
 
@@ -43,9 +45,10 @@
                             <th class="p-4">Type</th>
                             <th class="p-4">Monture</th>
                             <th class="p-4">Capteur</th>
-                            <th class="p-4">Ouverture / Poids</th>
+                            <th class="p-4">Ouverture</th>
+                            <th class="p-4">Poids</th>
                             <th class="p-4">Prix indicatif</th>
-                            <th class="p-4">Price History</th>
+                            <th class="p-4 w-40">Price History</th>
                             <th class="p-4 text-right">Action</th>
                         </tr>
                     </thead>
@@ -58,7 +61,7 @@
 
     </main>
 
-    <!-- Script de gestion des données -->
+    <!-- Script de gestion des données et des graphiques -->
     <script>
         const lenses = [
             { 
@@ -70,7 +73,7 @@
                 aperture: "f/2.8", 
                 weight: "695 g", 
                 price: "2 299 €",
-                history: "Stable (-2% vs launch)"
+                priceHistory: [2499, 2399, 2350, 2299] // Évolution des prix (ex: 4 derniers mois)
             },
             { 
                 name: "Sony FE 50mm f/1.4 GM", 
@@ -81,7 +84,7 @@
                 aperture: "f/1.4", 
                 weight: "516 g", 
                 price: "1 599 €",
-                history: "Baisse récente (-5%)"
+                priceHistory: [1699, 1649, 1599, 1599]
             },
             { 
                 name: "Sony FE 70-200mm f/2.8 GM OSS II", 
@@ -92,7 +95,7 @@
                 aperture: "f/2.8", 
                 weight: "1 045 g", 
                 price: "2 999 €",
-                history: "Prix stable"
+                priceHistory: [3099, 2999, 2999, 2999]
             },
             { 
                 name: "Sony E 35mm f/1.8 OSS", 
@@ -103,7 +106,7 @@
                 aperture: "f/1.8", 
                 weight: "154 g", 
                 price: "449 €",
-                history: "Bon marché historique"
+                priceHistory: [480, 460, 450, 449]
             },
             { 
                 name: "Sony FE 200-600mm f/5.6-6.3 G OSS", 
@@ -114,7 +117,7 @@
                 aperture: "f/5.6-6.3", 
                 weight: "2 115 g", 
                 price: "1 999 €",
-                history: "Tendance haussière"
+                priceHistory: [1899, 1949, 1999, 1999]
             }
         ];
 
@@ -125,11 +128,11 @@
         function displayLenses(data) {
             tableBody.innerHTML = '';
             if (data.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-gray-500">Aucun objectif trouvé</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="9" class="p-6 text-center text-gray-500">Aucun objectif trouvé</td></tr>`;
                 return;
             }
             
-            data.forEach(lens => {
+            data.forEach((lens, index) => {
                 const row = document.createElement('tr');
                 row.className = "hover:bg-gray-800/50 transition";
                 row.innerHTML = `
@@ -140,17 +143,48 @@
                     <td class="p-4"><span class="px-2.5 py-1 text-xs rounded-full ${lens.type === 'zoom' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'}">${lens.type === 'zoom' ? 'Zoom' : 'Fixe'}</span></td>
                     <td class="p-4"><span class="px-2 py-0.5 text-xs bg-gray-800 text-gray-300 rounded font-mono">${lens.mount}</span></td>
                     <td class="p-4 text-gray-300 text-xs">${lens.sensor}</td>
-                    <td class="p-4 text-gray-300 text-xs">
-                        <div>${lens.aperture}</div>
-                        <div class="text-gray-500">${lens.weight}</div>
-                    </td>
+                    <td class="p-4 text-gray-300 font-medium">${lens.aperture}</td>
+                    <td class="p-4 text-gray-300 text-xs">${lens.weight}</td>
                     <td class="p-4 font-semibold text-orange-400">${lens.price}</td>
-                    <td class="p-4 text-xs text-gray-400 italic">${lens.history}</td>
+                    <td class="p-4">
+                        <div class="w-32 h-12">
+                            <canvas id="chart-${index}"></canvas>
+                        </div>
+                    </td>
                     <td class="p-4 text-right">
                         <button onclick="alert('Détails prix pour ${lens.name}')" class="px-3 py-1.5 bg-gray-800 hover:bg-orange-600 hover:text-white rounded-lg transition text-xs font-medium">Prix</button>
                     </td>
                 `;
                 tableBody.appendChild(row);
+
+                // Génération du mini-graphique avec Chart.js
+                setTimeout(() => {
+                    const ctx = document.getElementById(`chart-${index}`).getContext('2d');
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: ['', '', '', ''],
+                            datasets: [{
+                                data: lens.priceHistory,
+                                borderColor: '#f97316',
+                                borderWidth: 2,
+                                pointRadius: 0,
+                                tension: 0.3,
+                                fill: true,
+                                backgroundColor: 'rgba(249, 115, 22, 0.05)'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false }, tooltip: { enabled: false } },
+                            scales: {
+                                x: { display: false },
+                                y: { display: false }
+                            }
+                        }
+                    });
+                }, 0);
             });
         }
 
