@@ -24,18 +24,24 @@
                     class="w-full bg-gray-900 border border-gray-800 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500 transition">
             </div>
             
-            <div class="flex flex-wrap gap-4 w-full lg:w-auto justify-between lg:justify-end">
+            <div class="flex flex-wrap gap-4 w-full lg:w-auto justify-between lg:justify-end items-center">
                 <div class="flex gap-1.5 bg-gray-900 p-1 border border-gray-800 rounded-lg">
                     <button onclick="filterType('all')" id="btn-type-all" class="px-3 py-1.5 text-xs bg-gray-800 text-white rounded-md transition font-medium">Tous types</button>
                     <button onclick="filterType('zoom')" id="btn-type-zoom" class="px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition">Zooms</button>
                     <button onclick="filterType('prime')" id="btn-type-prime" class="px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition">Fixes</button>
                 </div>
 
-                <div class="flex gap-1.5 bg-gray-900 p-1 border border-gray-800 rounded-lg">
-                    <button onclick="filterBrand('all')" id="btn-brand-all" class="px-3 py-1.5 text-xs bg-gray-800 text-white rounded-md transition font-medium">Toutes marques</button>
-                    <button onclick="filterBrand('Sony')" id="btn-brand-Sony" class="px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition">Sony</button>
-                    <button onclick="filterBrand('Sigma')" id="btn-brand-Sigma" class="px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition">Sigma</button>
-                    <button onclick="filterBrand('Tamron')" id="btn-brand-Tamron" class="px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition">Tamron</button>
+                <div class="flex items-center gap-3 bg-gray-900 px-3 py-1.5 border border-gray-800 rounded-lg text-xs">
+                    <span class="text-gray-400 font-medium">Marques :</span>
+                    <label class="flex items-center gap-1.5 cursor-pointer text-gray-200">
+                        <input type="checkbox" value="Sony" checked onchange="applyFilters()" class="rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Sony
+                    </label>
+                    <label class="flex items-center gap-1.5 cursor-pointer text-gray-200">
+                        <input type="checkbox" value="Sigma" checked onchange="applyFilters()" class="rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Sigma
+                    </label>
+                    <label class="flex items-center gap-1.5 cursor-pointer text-gray-200">
+                        <input type="checkbox" value="Tamron" checked onchange="applyFilters()" class="rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Tamron
+                    </label>
                 </div>
             </div>
         </div>
@@ -157,9 +163,7 @@
 
         const tableBody = document.getElementById('lensTableBody');
         const searchInput = document.getElementById('searchInput');
-        
         let currentType = 'all';
-        let currentBrand = 'all';
 
         function displayLenses(data) {
             tableBody.innerHTML = '';
@@ -177,116 +181,4 @@
                         <div class="text-xs text-gray-400 font-mono mt-0.5">${lens.ref}</div>
                     </td>
                     <td class="p-4">
-                        <span class="px-2.5 py-1 text-xs rounded-full font-medium ${lens.brand === 'Sony' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20' : lens.brand === 'Sigma' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'}">${lens.brand}</span>
-                    </td>
-                    <td class="p-4"><span class="px-2.5 py-1 text-xs rounded-full ${lens.type === 'zoom' ? 'bg-gray-800 text-gray-300' : 'bg-gray-800 text-gray-300'}">${lens.type === 'zoom' ? 'Zoom' : 'Fixe'}</span></td>
-                    <td class="p-4"><span class="px-2 py-0.5 text-xs bg-gray-800 text-gray-300 rounded font-mono">${lens.mount}</span></td>
-                    <td class="p-4 text-gray-300 text-xs">${lens.sensor}</td>
-                    <td class="p-4 text-gray-300 font-medium">${lens.aperture}</td>
-                    <td class="p-4 text-gray-300 text-xs">${lens.weight}</td>
-                    <td class="p-4 font-semibold text-orange-400">${lens.newPrice}</td>
-                    <td class="p-4">
-                        <div class="text-sky-400 font-medium">${lens.usedPrice}</div>
-                        <div class="text-[11px] text-gray-400">${lens.usedState}</div>
-                    </td>
-                    <td class="p-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-28 h-12">
-                                <canvas id="chart-${index}"></canvas>
-                            </div>
-                            <div class="text-xs space-y-0.5 whitespace-nowrap">
-                                <div class="text-emerald-400">Min: <span class="font-medium">${lens.minPrice}</span></div>
-                                <div class="text-rose-400">Max: <span class="font-medium">${lens.maxPrice}</span></div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="p-4 text-right">
-                        <button onclick="alert('Détails prix pour ${lens.name}')" class="px-3 py-1.5 bg-gray-800 hover:bg-orange-600 hover:text-white rounded-lg transition text-xs font-medium">Prix</button>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-
-                // Génération du mini-graphique
-                setTimeout(() => {
-                    const ctx = document.getElementById(`chart-${index}`).getContext('2d');
-                    new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: lens.historyLabels,
-                            datasets: [{
-                                data: lens.priceHistory,
-                                borderColor: '#f97316',
-                                borderWidth: 2,
-                                pointRadius: 2,
-                                pointBackgroundColor: '#f97316',
-                                tension: 0.3,
-                                fill: true,
-                                backgroundColor: 'rgba(249, 115, 22, 0.05)'
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: { 
-                                legend: { display: false }, 
-                                tooltip: { 
-                                    enabled: true,
-                                    callbacks: {
-                                        title: function(context) { return 'Mois : ' + context[0].label; },
-                                        label: function(context) { return ' Prix : ' + context.raw + ' €'; }
-                                    }
-                                } 
-                            },
-                            scales: {
-                                x: { display: false },
-                                y: { display: false }
-                            }
-                        }
-                    });
-                }, 0);
-            });
-        }
-
-        // Gestion des filtres de type
-        window.filterType = function(type) {
-            currentType = type;
-            document.querySelectorAll('[id^="btn-type-"]').forEach(btn => {
-                btn.className = "px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition";
-            });
-            document.getElementById(`btn-type-${type}`).className = "px-3 py-1.5 text-xs bg-gray-800 text-white rounded-md transition font-medium";
-            applyFilters();
-        }
-
-        // Gestion des filtres de marque
-        window.filterBrand = function(brand) {
-            currentBrand = brand;
-            document.querySelectorAll('[id^="btn-brand-"]').forEach(btn => {
-                btn.className = "px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition";
-            });
-            document.getElementById(`btn-brand-${brand}`).className = "px-3 py-1.5 text-xs bg-gray-800 text-white rounded-md transition font-medium";
-            applyFilters();
-        }
-
-        // Application combinée de tous les filtres (Recherche + Type + Marque)
-        function applyFilters() {
-            const query = searchInput.value.toLowerCase();
-            const filtered = lenses.filter(lens => {
-                const matchesType = currentType === 'all' || lens.type === currentType;
-                const matchesBrand = currentBrand === 'all' || lens.brand === currentBrand;
-                const matchesQuery = lens.name.toLowerCase().includes(query) || 
-                                     lens.ref.toLowerCase().includes(query) || 
-                                     lens.mount.toLowerCase().includes(query) || 
-                                     lens.sensor.toLowerCase().includes(query) ||
-                                     lens.brand.toLowerCase().includes(query);
-                return matchesType && matchesBrand && matchesQuery;
-            });
-            displayLenses(filtered);
-        }
-
-        searchInput.addEventListener('input', applyFilters);
-
-        // Affichage initial
-        displayLenses(lenses);
-    </script>
-</body>
-</html>
+                        <span class="px-2.5 py-1 text-xs rounded-full font-medium ${lens.brand === 'Sony' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20' : lens.brand === 'Sigma' ? 'bg-
