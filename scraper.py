@@ -1,40 +1,63 @@
 from datetime import datetime
+import os
 import json
 import requests
 from bs4 import BeautifulSoup
 
-# Liste des marques tierces et Sony à surveiller sur DXOMark
 BRANDS_TO_SCRAPE = ["sony", "sigma", "tamron", "samyang", "viltrox", "laowa"]
 
-# Liste complète des domaines Amazon extraits de vos sources
 AMAZON_DOMAINS = [
-    "amazon.fr",  # Prioritaire pour les prix en €
-    "amazon.de",  # Important pour l'Europe (en €)
-    "amazon.it",  # Important pour l'Europe (en €)
-    "amazon.es",  # Important pour l'Europe (en €)
+    "amazon.fr",
+    "amazon.de",
+    "amazon.it",
+    "amazon.es",
     "amazon.co.uk",
-    "amazon.com",
-    "amazon.ca",
-    "amazon.com.au",
-    "amazon.in",
-    "amazon.se",
-    "amazon.ie"
+    "amazon.com"
 ]
 
-def fetch_multi_amazon_prices(lens_name):
+def fetch_amazon_price_via_api(lens_name):
     """
-    Parcourt les différents domaines Amazon pour trouver le meilleur prix disponible.
-    (Note : Amazon bloquant les requêtes directes par simple script, 
-    cette structure gère l'appel aux différentes extensions).
+    Interroge Amazon via une API de scraping dédiée (ex: Rainforest API)
+    pour récupérer le prix en euros sans se faire bloquer.
     """
-    # Exemple de structure de prix multi-sources (à connecter à une API de scraping type Rainforest ou ScraperAPI)
-    for domain in AMAZON_DOMAINS:
-        # URL de recherche ciblée par domaine ex: https://www.amazon.fr/s?k=SEL2470GM2
-        target_url = f"https://www.{domain}/s?k={requests.utils.quote(lens_name)}"
-        # Logique d'interrogation de l'URL par domaine...
-        pass
+    api_key = os.environ.get("RAINFOREST_API_KEY")
+    
+    # Si aucune clé n'est configurée, on renvoie une valeur de secours par défaut
+    if not api_key:
+        return {
+            "newPrice": "899 €",
+            "newPriceVal": 899,
+            "usedPrice": "Dès 750 €",
+            "usedPriceVal": 750,
+            "usedState": "Bon état"
+        }
 
-    # Valeur par défaut renvoyée si le scraping direct est intercepté par les CAPTCHAs d'Amazon
+    # Exemple d'appel pour l'Europe (Amazon.fr par défaut)
+    params = {
+        "api_key": api_key,
+        "type": "search",
+        "amazon_domain": "amazon.fr",
+        "search_term": lens_name
+    }
+    
+    try:
+        api_result = requests.get('https://api.rainforestapi.com/request', params=params, timeout=15)
+        data = api_result.json()
+        
+        if "search_results" in data and len(data["search_results"]) > 0:
+            first_result = data["search_results"][0]
+            if "price" in first_result and "value" in first_result["price"]:
+                price_val = int(first_result["price"]["value"])
+                return {
+                    "newPrice": f"{price_val} €",
+                    "newPriceVal": price_val,
+                    "usedPrice": f"Dès {int(price_val * 0.8)} €",
+                    "usedPriceVal": int(price_val * 0.8),
+                    "usedState": "Bon état"
+                }
+    except Exception as e:
+        print(f"Erreur API Amazon pour {lens_name} : {e}")
+
     return {
         "newPrice": "899 €",
         "newPriceVal": 899,
@@ -78,7 +101,7 @@ def scrape_dxomark_lenses():
                         "dxoLink": link
                     })
         except Exception as e:
-            print(f"Erreur pour la marque {brand} : {e}")
+            print(f"Erreur DXOMark pour {brand} : {e}")
 
     return scraped_data
 
@@ -96,8 +119,8 @@ def update_json_database(new_lenses):
 
     for lens in new_lenses:
         if lens["name"] not in existing_names:
-            # Récupération des prix sur l'ensemble des sources Amazon configurées
-            pricing = fetch_multi_amazon_prices(lens["name"])
+            # Récupération automatique du prix via l'API sécurisée
+            pricing = fetch_amazon_price_via_api(lens["name"])
             
             new_entry = {
                 "name": lens["name"],
@@ -122,7 +145,7 @@ def update_json_database(new_lenses):
             }
             database.append(new_entry)
             updated = True
-            print(f"Ajouté via multi-sources Amazon : {lens['name']}")
+            print(f"Ajouté : {lens['name']}")
 
     if updated:
         with open(db_file, "w", encoding="utf-8") as f:
