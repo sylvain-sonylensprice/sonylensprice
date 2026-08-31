@@ -3,23 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SonyLensPrice - Comparateur de prix</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 40px;
-            background-color: #f4f4f9;
-            color: #333;
-            text-align: center;
-        }
-        h1 {
-            color: #000;
-        }
-    </style>
+    <title>SonyLensPrice - Comparateur d'objectifs photo Sony</title>
+    <!-- Tailwind CSS pour un design rapide et professionnel -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Bienvenue sur SonyLensPrice</h1>
-    <p>Le comparateur de prix des objectifs photo Sony arrive bientôt !</p>
+<body class="bg-gray-950 text-gray-100 min-h-screen font-sans">
+
+    <!-- En-tête -->
+    <header class="border-b border-gray-800 bg-gray-900/50 backdrop-blur sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-xl font-bold tracking-tight text-orange-500">SonyLens<span class="text-white">Price</span></h1>
+            <span class="text-sm text-gray-400">Le comparateur des optiques Sony E / FE</span>
+        </div>
+    </header>
+
+    <!-- Contenu principal -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
+        
+        <!-- Barre de recherche et filtres -->
+        <div class="mb-8 flex flex-col sm:flex-row gap-4 justify-between items-center">
+            <div class="w-full sm:w-96">
+                <input type="text" id="searchInput" placeholder="Rechercher un objectif (ex: 24-70, GM, 50mm)..." 
+                    class="w-full bg-gray-900 border border-gray-800 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500 transition">
+            </div>
+            <div class="flex gap-2 w-full sm:w-auto">
+                <button onclick="filterType('all')" class="px-4 py-2 text-sm bg-gray-800 hover:bg-gray-700 rounded-lg transition font-medium">Tous</button>
+                <button onclick="filterType('zoom')" class="px-4 py-2 text-sm bg-gray-900 border border-gray-800 hover:bg-gray-800 rounded-lg transition text-gray-300">Zooms</button>
+                <button onclick="filterType('prime')" class="px-4 py-2 text-sm bg-gray-900 border border-gray-800 hover:bg-gray-800 rounded-lg transition text-gray-300">Focales fixes</button>
+            </div>
+        </div>
+
+        <!-- Tableau des objectifs -->
+        <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-xl">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-gray-800 text-xs uppercase tracking-wider text-gray-400 bg-gray-900/80">
+                            <th class="p-4">Objectif</th>
+                            <th class="p-4">Type</th>
+                            <th class="p-4">Ouverture</th>
+                            <th class="p-4">Poids</th>
+                            <th class="p-4">Prix indicatif</th>
+                            <th class="p-4 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lensTableBody" class="divide-y divide-gray-800 text-sm">
+                        <!-- Les lignes seront injectées par JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Script de gestion des données et du filtre -->
+    <script>
+        // Base de données exemple pour commencer
+        const lenses = [
+            { name: "Sony FE 24-70mm f/2.8 GM II", type: "zoom", aperture: "f/2.8", weight: "695 g", price: "2 299 €" },
+            { name: "Sony FE 50mm f/1.4 GM", type: "prime", aperture: "f/1.4", weight: "516 g", price: "1 599 €" },
+            { name: "Sony FE 70-200mm f/2.8 GM OSS II", type: "zoom", aperture: "f/2.8", weight: "1 045 g", price: "2 999 €" },
+            { name: "Sony FE 35mm f/1.8", type: "prime", aperture: "f/1.8", weight: "281 g", price: "599 €" },
+            { name: "Sony FE 200-600mm f/5.6-6.3 G OSS", type: "zoom", aperture: "f/5.6-6.3", weight: "2 115 g", price: "1 999 €" }
+        ];
+
+        const tableBody = document.getElementById('lensTableBody');
+        const searchInput = document.getElementById('searchInput');
+        let currentType = 'all';
+
+        function displayLenses(data) {
+            tableBody.innerHTML = '';
+            if (data.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-gray-500">Aucun objectif trouvé</td></tr>`;
+                return;
+            }
+            
+            data.forEach(lens => {
+                const row = document.createElement('tr');
+                row.className = "hover:bg-gray-800/50 transition";
+                row.innerHTML = `
+                    <td class="p-4 font-medium text-white">${lens.name}</td>
+                    <td class="p-4"><span class="px-2.5 py-1 text-xs rounded-full ${lens.type === 'zoom' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'}">${lens.type === 'zoom' ? 'Zoom' : 'Focale fixe'}</span></td>
+                    <td class="p-4 text-gray-300">${lens.aperture}</td>
+                    <td class="p-4 text-gray-300">${lens.weight}</td>
+                    <td class="p-4 font-semibold text-orange-400">${lens.price}</td>
+                    <td class="p-4 text-right">
+                        <button onclick="alert('Bientôt : Comparatif des prix marchands pour ${lens.name}')" class="px-3 py-1.5 bg-gray-800 hover:bg-orange-600 hover:text-white rounded-lg transition text-xs font-medium">Voir les prix</button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Filtrage par type
+        window.filterType = function(type) {
+            currentType = type;
+            applyFilters();
+        }
+
+        // Filtrage combiné recherche + type
+        function applyFilters() {
+            const query = searchInput.value.toLowerCase();
+            const filtered = lenses.filter(lens => {
+                const matchesType = currentType === 'all' || lens.type === currentType;
+                const matchesQuery = lens.name.toLowerCase().includes(query);
+                return matchesType && matchesQuery;
+            });
+            displayLenses(filtered);
+        }
+
+        searchInput.addEventListener('input', applyFilters);
+
+        // Affichage initial
+        displayLenses(lenses);
+    </script>
 </body>
 </html>
