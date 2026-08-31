@@ -9,103 +9,124 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body class="bg-gray-950 text-gray-100 min-h-screen font-sans">
+<body class="bg-gray-950 text-gray-100 min-h-screen font-sans flex flex-col justify-between">
 
-    <!-- En-tête -->
-    <header class="border-b border-gray-800 bg-gray-900/50 backdrop-blur sticky top-0 z-20">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-xl font-bold tracking-tight text-orange-500">SonyLens<span class="text-white">Price</span></h1>
-            <span class="text-sm text-gray-400">Optiques Sony & Tiers | Évaluations DXOMark</span>
-        </div>
-    </header>
-
-    <!-- Contenu principal -->
-    <main class="max-w-7xl mx-auto px-4 py-8">
-        
-        <!-- Barre de recherche et filtres (Type + Multi-marques) -->
-        <div class="mb-8 flex flex-col lg:flex-row gap-4 justify-between items-center">
-            <div class="w-full lg:w-80">
-                <input type="text" id="searchInput" placeholder="Rechercher (ex: Sigma, SEL2470)..." 
-                    class="w-full bg-gray-900 border border-gray-800 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500 transition">
+    <div>
+        <!-- En-tête -->
+        <header class="border-b border-gray-800 bg-gray-900/50 backdrop-blur sticky top-0 z-20">
+            <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+                <h1 class="text-xl font-bold tracking-tight text-orange-500">SonyLens<span class="text-white">Price</span></h1>
+                <span class="text-sm text-gray-400">Optiques Sony & Tiers | Évaluations DXOMark</span>
             </div>
+        </header>
+
+        <!-- Contenu principal -->
+        <main class="max-w-7xl mx-auto px-4 py-8">
             
-            <div class="flex flex-wrap gap-4 w-full lg:w-auto justify-between lg:justify-end items-center">
-                <!-- Filtres par Type -->
-                <div class="flex gap-1.5 bg-gray-900 p-1 border border-gray-800 rounded-lg">
-                    <button onclick="filterType('all')" id="btn-type-all" class="px-3 py-1.5 text-xs bg-gray-800 text-white rounded-md transition font-medium">Tous types</button>
-                    <button onclick="filterType('zoom')" id="btn-type-zoom" class="px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition">Zooms</button>
-                    <button onclick="filterType('prime')" id="btn-type-prime" class="px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition">Fixes</button>
+            <!-- Barre de recherche et filtres (Type + Multi-marques) -->
+            <div class="mb-8 flex flex-col lg:flex-row gap-4 justify-between items-center">
+                <div class="w-full lg:w-80">
+                    <input type="text" id="searchInput" placeholder="Rechercher (ex: Sigma, SEL2470)..." 
+                        class="w-full bg-gray-900 border border-gray-800 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500 transition">
                 </div>
+                
+                <div class="flex flex-wrap gap-4 w-full lg:w-auto justify-between lg:justify-end items-center">
+                    <!-- Filtres par Type -->
+                    <div class="flex gap-1.5 bg-gray-900 p-1 border border-gray-800 rounded-lg">
+                        <button onclick="filterType('all')" id="btn-type-all" class="px-3 py-1.5 text-xs bg-gray-800 text-white rounded-md transition font-medium">Tous types</button>
+                        <button onclick="filterType('zoom')" id="btn-type-zoom" class="px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition">Zooms</button>
+                        <button onclick="filterType('prime')" id="btn-type-prime" class="px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition">Fixes</button>
+                    </div>
 
-                <!-- Multi-sélection par Marques -->
-                <div class="flex items-center gap-3 bg-gray-900 px-3 py-1.5 border border-gray-800 rounded-lg text-xs">
-                    <span class="text-gray-400 font-medium">Marques :</span>
-                    <label class="flex items-center gap-1.5 cursor-pointer text-gray-200">
-                        <input type="checkbox" value="Sony" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Sony
-                    </label>
-                    <label class="flex items-center gap-1.5 cursor-pointer text-gray-200">
-                        <input type="checkbox" value="Sigma" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Sigma
-                    </label>
-                    <label class="flex items-center gap-1.5 cursor-pointer text-gray-200">
-                        <input type="checkbox" value="Tamron" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Tamron
-                    </label>
+                    <!-- Multi-sélection par Marques -->
+                    <div class="flex items-center gap-3 bg-gray-900 px-3 py-1.5 border border-gray-800 rounded-lg text-xs">
+                        <span class="text-gray-400 font-medium">Marques :</span>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200">
+                            <input type="checkbox" value="Sony" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Sony
+                        </label>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200">
+                            <input type="checkbox" value="Sigma" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Sigma
+                        </label>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200">
+                            <input type="checkbox" value="Tamron" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Tamron
+                        </label>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Tableau des objectifs -->
-        <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-xl">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse min-w-[1200px]">
-                    <thead>
-                        <tr class="border-b border-gray-800 text-xs uppercase tracking-wider text-gray-400 bg-gray-900/80">
-                            <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('name')">
-                                <div class="flex items-center gap-1.5">
-                                    Objectif (Réf.) <span id="sort-icon-name" class="text-gray-600">⇅</span>
-                                </div>
-                            </th>
-                            <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('brand')">
-                                <div class="flex items-center gap-1.5">
-                                    Marque <span id="sort-icon-brand" class="text-gray-600">⇅</span>
-                                </div>
-                            </th>
-                            <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('type')">
-                                <div class="flex items-center gap-1.5">
-                                    Type <span id="sort-icon-type" class="text-gray-600">⇅</span>
-                                </div>
-                            </th>
-                            <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('aperture')">
-                                <div class="flex items-center gap-1.5">
-                                    Ouverture <span id="sort-icon-aperture" class="text-gray-600">⇅</span>
-                                </div>
-                            </th>
-                            <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('dxoScore')">
-                                <div class="flex items-center gap-1.5">
-                                    DXOMark Score <span id="sort-icon-dxoScore" class="text-gray-600">⇅</span>
-                                </div>
-                            </th>
-                            <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('newPriceVal')">
-                                <div class="flex items-center gap-1.5">
-                                    Neuf <span id="sort-icon-newPriceVal" class="text-gray-600">⇅</span>
-                                </div>
-                            </th>
-                            <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('usedPriceVal')">
-                                <div class="flex items-center gap-1.5">
-                                    Occasion <span id="sort-icon-usedPriceVal" class="text-gray-600">⇅</span>
-                                </div>
-                            </th>
-                            <th class="p-4 w-64">Price History (Min / Max)</th>
-                            <th class="p-4 text-right">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="lensTableBody" class="divide-y divide-gray-800 text-sm">
-                        <!-- Les lignes seront injectées par JavaScript -->
-                    </tbody>
-                </table>
+            <!-- Tableau des objectifs -->
+            <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-xl mb-12">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[1200px]">
+                        <thead>
+                            <tr class="border-b border-gray-800 text-xs uppercase tracking-wider text-gray-400 bg-gray-900/80">
+                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('name')">
+                                    <div class="flex items-center gap-1.5">
+                                        Objectif (Réf.) <span id="sort-icon-name" class="text-gray-600">⇅</span>
+                                    </div>
+                                </th>
+                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('brand')">
+                                    <div class="flex items-center gap-1.5">
+                                        Marque <span id="sort-icon-brand" class="text-gray-600">⇅</span>
+                                    </div>
+                                </th>
+                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('type')">
+                                    <div class="flex items-center gap-1.5">
+                                        Type <span id="sort-icon-type" class="text-gray-600">⇅</span>
+                                    </div>
+                                </th>
+                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('aperture')">
+                                    <div class="flex items-center gap-1.5">
+                                        Ouverture <span id="sort-icon-aperture" class="text-gray-600">⇅</span>
+                                    </div>
+                                </th>
+                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('dxoScore')">
+                                    <div class="flex items-center gap-1.5">
+                                        DXOMark Score <span id="sort-icon-dxoScore" class="text-gray-600">⇅</span>
+                                    </div>
+                                </th>
+                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('newPriceVal')">
+                                    <div class="flex items-center gap-1.5">
+                                        Neuf <span id="sort-icon-newPriceVal" class="text-gray-600">⇅</span>
+                                    </div>
+                                </th>
+                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('usedPriceVal')">
+                                    <div class="flex items-center gap-1.5">
+                                        Occasion <span id="sort-icon-usedPriceVal" class="text-gray-600">⇅</span>
+                                    </div>
+                                </th>
+                                <th class="p-4 w-64">Price History (Min / Max)</th>
+                                <th class="p-4 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lensTableBody" class="divide-y divide-gray-800 text-sm">
+                            <!-- Les lignes seront injectées par JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
 
-    </main>
+            <!-- Section Abonnement / Alertes -->
+            <section class="bg-gray-900 border border-gray-800 rounded-xl p-6 sm:p-8 max-w-2xl mx-auto text-center shadow-xl">
+                <h2 class="text-lg font-bold text-white mb-2">Restez informé des nouveaux tests & baisses de prix</h2>
+                <p class="text-xs text-gray-400 mb-6">Recevez une alerte e-mail dès qu'un nouvel objectif est testé par DXOMark ou qu'une baisse majeure est détectée.</p>
+                <form onsubmit="handleSubscribe(event)" class="flex flex-col sm:flex-row gap-2 justify-center">
+                    <input type="email" id="subscriberEmail" placeholder="Votre adresse e-mail..." required
+                        class="bg-gray-950 border border-gray-800 rounded-lg px-4 py-2 text-sm text-gray-200 focus:outline-none focus:border-orange-500 transition sm:w-72">
+                    <button type="submit" class="bg-orange-600 hover:bg-orange-500 text-white text-xs font-semibold px-5 py-2.5 rounded-lg transition">
+                        S'abonner aux alertes
+                    </button>
+                </form>
+                <div id="subscribeMessage" class="text-xs text-emerald-400 mt-3 hidden">Inscription enregistrée avec succès !</div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Pied de page -->
+    <footer class="border-t border-gray-800 bg-gray-900/30 text-center py-6 text-xs text-gray-500 mt-12">
+        SonyLensPrice — Données indicatives basées sur les protocoles DXOMark.
+    </footer>
 
     <!-- Script de gestion -->
     <script>
@@ -118,6 +139,7 @@
                 aperture: "f/2.8", 
                 dxoScore: 37,
                 dxoQual: "Exceptionnel",
+                dxoLink: "https://www.dxomark.com",
                 newPrice: "2 299 €",
                 newPriceVal: 2299,
                 usedPrice: "Dès 1 989 €",
@@ -136,6 +158,7 @@
                 aperture: "f/2.8", 
                 dxoScore: 35,
                 dxoQual: "Remarquable",
+                dxoLink: "https://www.dxomark.com",
                 newPrice: "1 349 €",
                 newPriceVal: 1349,
                 usedPrice: "Dès 1 150 €",
@@ -154,6 +177,7 @@
                 aperture: "f/2.8", 
                 dxoScore: 34,
                 dxoQual: "Très bon",
+                dxoLink: "https://www.dxomark.com",
                 newPrice: "899 €",
                 newPriceVal: 899,
                 usedPrice: "Dès 750 €",
@@ -172,6 +196,7 @@
                 aperture: "f/1.4", 
                 dxoScore: 42,
                 dxoQual: "Exceptionnel",
+                dxoLink: "https://www.dxomark.com",
                 newPrice: "1 599 €",
                 newPriceVal: 1599,
                 usedPrice: "Dès 1 390 €",
@@ -190,6 +215,7 @@
                 aperture: "f/1.4", 
                 dxoScore: 44,
                 dxoQual: "Exceptionnel",
+                dxoLink: "https://www.dxomark.com",
                 newPrice: "1 149 €",
                 newPriceVal: 1149,
                 usedPrice: "Dès 980 €",
@@ -231,7 +257,10 @@
                     <td class="p-4">
                         <div class="flex items-center gap-2">
                             <span class="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold text-xs rounded">${lens.dxoScore}/50</span>
-                            <span class="text-xs text-gray-300 font-medium">${lens.dxoQual}</span>
+                            <a href="${lens.dxoLink}" target="_blank" rel="noopener noreferrer" class="text-xs text-gray-300 font-medium hover:text-orange-400 hover:underline inline-flex items-center gap-1">
+                                ${lens.dxoQual} 
+                                <svg class="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            </a>
                         </div>
                     </td>
                     <td class="p-4 font-semibold text-orange-400">${lens.newPrice}</td>
@@ -317,13 +346,11 @@
                 currentSortDirection = 'asc';
             }
 
-            // Réinitialiser tous les icônes de tri
             document.querySelectorAll('[id^="sort-icon-"]').forEach(el => {
                 el.textContent = '⇅';
                 el.className = 'text-gray-600';
             });
 
-            // Mettre à jour l'icône de la colonne active
             const activeIcon = document.getElementById(`sort-icon-${column}`);
             if (activeIcon) {
                 activeIcon.textContent = currentSortDirection === 'asc' ? '▲' : '▼';
@@ -348,7 +375,6 @@
                 return matchesType && matchesBrand && matchesQuery;
             });
 
-            // Application du tri si une colonne est sélectionnée
             if (currentSortColumn) {
                 filtered.sort((a, b) => {
                     let valA = a[currentSortColumn];
@@ -368,9 +394,20 @@
             displayLenses(filtered);
         }
 
-        searchInput.addEventListener('input', applyFilters);
+        window.handleSubscribe = function(event) {
+            event.preventDefault();
+            const emailInput = document.getElementById('subscriberEmail');
+            const msg = document.getElementById('subscribeMessage');
+            if(emailInput.value) {
+                msg.classList.remove('hidden');
+                emailInput.value = '';
+                setTimeout(() => {
+                    msg.classList.add('hidden');
+                }, 4000);
+            }
+        }
 
-        // Lancement immédiat au chargement de la page
+        searchInput.addEventListener('input', applyFilters);
         applyFilters();
     </script>
 </body>
