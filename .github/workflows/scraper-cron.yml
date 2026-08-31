@@ -1,0 +1,34 @@
+name: DXOMark Auto-Scraper
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # S'exécute chaque jour à minuit UTC
+  workflow_dispatch:     # Permet de le lancer manuellement depuis l'onglet "Actions" de GitHub
+
+jobs:
+  run-scraper:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write    # Autorise GitHub à modifier et sauvegarder le fichier JSON dans le dépôt
+    steps:
+      - name: Récupérer le code du dépôt
+        uses: actions/checkout@v4
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Installer les dépendances
+        run: |
+          pip install requests beautifulsoup4
+
+      - name: Exécuter le script de scraping
+        run: python scraper.py
+
+      - name: Sauvegarder automatiquement le fichier JSON mis à jour
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add lenses_db.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Mise à jour automatique des tests DXOMark" && git push)
