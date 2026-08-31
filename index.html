@@ -3,45 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SonyLensPrice - Comparateur d'objectifs photo Sony</title>
-    <!-- Tailwind CSS -->
+    <title>SonyLensPrice - Comparateur d'objectifs photo Sony & Tiers</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-950 text-gray-100 min-h-screen font-sans">
 
-    <!-- En-tête -->
     <header class="border-b border-gray-800 bg-gray-900/50 backdrop-blur sticky top-0 z-10">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <h1 class="text-xl font-bold tracking-tight text-orange-500">SonyLens<span class="text-white">Price</span></h1>
-            <span class="text-sm text-gray-400">Le comparateur des optiques Sony E / FE / A</span>
+            <span class="text-sm text-gray-400">Le comparateur des optiques Sony & Montures E tierces</span>
         </div>
     </header>
 
-    <!-- Contenu principal -->
     <main class="max-w-7xl mx-auto px-4 py-8">
         
-        <!-- Barre de recherche et filtres -->
-        <div class="mb-8 flex flex-col sm:flex-row gap-4 justify-between items-center">
-            <div class="w-full sm:w-96">
-                <input type="text" id="searchInput" placeholder="Rechercher (ex: SEL2470GM2, FE, Full-frame)..." 
+        <div class="mb-8 flex flex-col lg:flex-row gap-4 justify-between items-center">
+            <div class="w-full lg:w-80">
+                <input type="text" id="searchInput" placeholder="Rechercher (ex: Sigma, Tamron, SEL2470)..." 
                     class="w-full bg-gray-900 border border-gray-800 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500 transition">
             </div>
-            <div class="flex gap-2 w-full sm:w-auto">
-                <button onclick="filterType('all')" class="px-4 py-2 text-sm bg-gray-800 hover:bg-gray-700 rounded-lg transition font-medium">Tous</button>
-                <button onclick="filterType('zoom')" class="px-4 py-2 text-sm bg-gray-900 border border-gray-800 hover:bg-gray-800 rounded-lg transition text-gray-300">Zooms</button>
-                <button onclick="filterType('prime')" class="px-4 py-2 text-sm bg-gray-900 border border-gray-800 hover:bg-gray-800 rounded-lg transition text-gray-300">Focales fixes</button>
+            
+            <div class="flex flex-wrap gap-4 w-full lg:w-auto justify-between lg:justify-end">
+                <div class="flex gap-1.5 bg-gray-900 p-1 border border-gray-800 rounded-lg">
+                    <button onclick="filterType('all')" id="btn-type-all" class="px-3 py-1.5 text-xs bg-gray-800 text-white rounded-md transition font-medium">Tous types</button>
+                    <button onclick="filterType('zoom')" id="btn-type-zoom" class="px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition">Zooms</button>
+                    <button onclick="filterType('prime')" id="btn-type-prime" class="px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition">Fixes</button>
+                </div>
+
+                <div class="flex gap-1.5 bg-gray-900 p-1 border border-gray-800 rounded-lg">
+                    <button onclick="filterBrand('all')" id="btn-brand-all" class="px-3 py-1.5 text-xs bg-gray-800 text-white rounded-md transition font-medium">Toutes marques</button>
+                    <button onclick="filterBrand('Sony')" id="btn-brand-Sony" class="px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition">Sony</button>
+                    <button onclick="filterBrand('Sigma')" id="btn-brand-Sigma" class="px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition">Sigma</button>
+                    <button onclick="filterBrand('Tamron')" id="btn-brand-Tamron" class="px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition">Tamron</button>
+                </div>
             </div>
         </div>
 
-        <!-- Tableau des objectifs -->
         <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-xl">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="border-b border-gray-800 text-xs uppercase tracking-wider text-gray-400 bg-gray-900/80">
                             <th class="p-4">Objectif (Réf.)</th>
+                            <th class="p-4">Marque</th>
                             <th class="p-4">Type</th>
                             <th class="p-4">Monture</th>
                             <th class="p-4">Capteur</th>
@@ -54,19 +59,18 @@
                         </tr>
                     </thead>
                     <tbody id="lensTableBody" class="divide-y divide-gray-800 text-sm">
-                        <!-- Les lignes seront injectées par JavaScript -->
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
         </div>
 
     </main>
 
-    <!-- Script de gestion des données et des graphiques -->
     <script>
         const lenses = [
             { 
                 name: "Sony FE 24-70mm f/2.8 GM II", 
+                brand: "Sony",
                 ref: "SEL2470GM2",
                 type: "zoom", 
                 mount: "FE",
@@ -82,7 +86,42 @@
                 maxPrice: "2 499 € (Jan)"
             },
             { 
+                name: "Sigma 24-70mm f/2.8 DG DN Art II", 
+                brand: "Sigma",
+                ref: "303969",
+                type: "zoom", 
+                mount: "FE",
+                sensor: "Full-frame",
+                aperture: "f/2.8", 
+                weight: "745 g", 
+                newPrice: "1 349 €",
+                usedPrice: "Dès 1 150 €",
+                usedState: "Comme neuf",
+                historyLabels: ['Jan', 'Fév', 'Mar', 'Avr'],
+                priceHistory: [1399, 1379, 1349, 1349],
+                minPrice: "1 349 € (Mar)",
+                maxPrice: "1 399 € (Jan)"
+            },
+            { 
+                name: "Tamron 28-75mm f/2.8 Di III VXD G2", 
+                brand: "Tamron",
+                ref: "A063",
+                type: "zoom", 
+                mount: "FE",
+                sensor: "Full-frame",
+                aperture: "f/2.8", 
+                weight: "540 g", 
+                newPrice: "899 €",
+                usedPrice: "Dès 750 €",
+                usedState: "Bon état",
+                historyLabels: ['Jan', 'Fév', 'Mar', 'Avr'],
+                priceHistory: [949, 919, 899, 899],
+                minPrice: "899 € (Mar)",
+                maxPrice: "949 € (Jan)"
+            },
+            { 
                 name: "Sony FE 50mm f/1.4 GM", 
+                brand: "Sony",
                 ref: "SEL50F14GM",
                 type: "prime", 
                 mount: "FE",
@@ -98,63 +137,34 @@
                 maxPrice: "1 699 € (Jan)"
             },
             { 
-                name: "Sony FE 70-200mm f/2.8 GM OSS II", 
-                ref: "SEL70200GM2",
-                type: "zoom", 
-                mount: "FE",
-                sensor: "Full-frame",
-                aperture: "f/2.8", 
-                weight: "1 045 g", 
-                newPrice: "2 999 €",
-                usedPrice: "Dès 2 650 €",
-                usedState: "Bon état",
-                historyLabels: ['Jan', 'Fév', 'Mar', 'Avr'],
-                priceHistory: [3099, 2999, 2999, 2999],
-                minPrice: "2 999 € (Fév)",
-                maxPrice: "3 099 € (Jan)"
-            },
-            { 
-                name: "Sony E 35mm f/1.8 OSS", 
-                ref: "SEL35F18",
+                name: "Sigma 85mm f/1.4 DG DN Art", 
+                brand: "Sigma",
+                ref: "316969",
                 type: "prime", 
-                mount: "E",
-                sensor: "APS-C",
-                aperture: "f/1.8", 
-                weight: "154 g", 
-                newPrice: "449 €",
-                usedPrice: "Dès 320 €",
-                usedState: "État acceptable",
-                historyLabels: ['Jan', 'Fév', 'Mar', 'Avr'],
-                priceHistory: [480, 460, 450, 449],
-                minPrice: "449 € (Avr)",
-                maxPrice: "480 € (Jan)"
-            },
-            { 
-                name: "Sony FE 200-600mm f/5.6-6.3 G OSS", 
-                ref: "SEL200600G",
-                type: "zoom", 
                 mount: "FE",
                 sensor: "Full-frame",
-                aperture: "f/5.6-6.3", 
-                weight: "2 115 g", 
-                newPrice: "1 999 €",
-                usedPrice: "Dès 1 740 €",
-                usedState: "Comme neuf",
+                aperture: "f/1.4", 
+                weight: "625 g", 
+                newPrice: "1 149 €",
+                usedPrice: "Dès 980 €",
+                usedState: "Très bon état",
                 historyLabels: ['Jan', 'Fév', 'Mar', 'Avr'],
-                priceHistory: [1899, 1949, 1999, 1999],
-                minPrice: "1 899 € (Jan)",
-                maxPrice: "1 999 € (Mar)"
+                priceHistory: [1199, 1169, 1149, 1149],
+                minPrice: "1 149 € (Mar)",
+                maxPrice: "1 199 € (Jan)"
             }
         ];
 
         const tableBody = document.getElementById('lensTableBody');
         const searchInput = document.getElementById('searchInput');
+        
         let currentType = 'all';
+        let currentBrand = 'all';
 
         function displayLenses(data) {
             tableBody.innerHTML = '';
             if (data.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="10" class="p-6 text-center text-gray-500">Aucun objectif trouvé</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="11" class="p-6 text-center text-gray-500">Aucun objectif trouvé</td></tr>`;
                 return;
             }
             
@@ -166,7 +176,10 @@
                         <div class="font-medium text-white">${lens.name}</div>
                         <div class="text-xs text-gray-400 font-mono mt-0.5">${lens.ref}</div>
                     </td>
-                    <td class="p-4"><span class="px-2.5 py-1 text-xs rounded-full ${lens.type === 'zoom' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20' : 'bg-blue-500/10 text-blue-400 border border-blue-500/20'}">${lens.type === 'zoom' ? 'Zoom' : 'Fixe'}</span></td>
+                    <td class="p-4">
+                        <span class="px-2.5 py-1 text-xs rounded-full font-medium ${lens.brand === 'Sony' ? 'bg-orange-500/10 text-orange-400 border border-orange-500/20' : lens.brand === 'Sigma' ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'}">${lens.brand}</span>
+                    </td>
+                    <td class="p-4"><span class="px-2.5 py-1 text-xs rounded-full ${lens.type === 'zoom' ? 'bg-gray-800 text-gray-300' : 'bg-gray-800 text-gray-300'}">${lens.type === 'zoom' ? 'Zoom' : 'Fixe'}</span></td>
                     <td class="p-4"><span class="px-2 py-0.5 text-xs bg-gray-800 text-gray-300 rounded font-mono">${lens.mount}</span></td>
                     <td class="p-4 text-gray-300 text-xs">${lens.sensor}</td>
                     <td class="p-4 text-gray-300 font-medium">${lens.aperture}</td>
@@ -234,26 +247,45 @@
             });
         }
 
+        // Gestion des filtres de type
         window.filterType = function(type) {
             currentType = type;
+            document.querySelectorAll('[id^="btn-type-"]').forEach(btn => {
+                btn.className = "px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition";
+            });
+            document.getElementById(`btn-type-${type}`).className = "px-3 py-1.5 text-xs bg-gray-800 text-white rounded-md transition font-medium";
             applyFilters();
         }
 
+        // Gestion des filtres de marque
+        window.filterBrand = function(brand) {
+            currentBrand = brand;
+            document.querySelectorAll('[id^="btn-brand-"]').forEach(btn => {
+                btn.className = "px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition";
+            });
+            document.getElementById(`btn-brand-${brand}`).className = "px-3 py-1.5 text-xs bg-gray-800 text-white rounded-md transition font-medium";
+            applyFilters();
+        }
+
+        // Application combinée de tous les filtres (Recherche + Type + Marque)
         function applyFilters() {
             const query = searchInput.value.toLowerCase();
             const filtered = lenses.filter(lens => {
                 const matchesType = currentType === 'all' || lens.type === currentType;
+                const matchesBrand = currentBrand === 'all' || lens.brand === currentBrand;
                 const matchesQuery = lens.name.toLowerCase().includes(query) || 
                                      lens.ref.toLowerCase().includes(query) || 
                                      lens.mount.toLowerCase().includes(query) || 
-                                     lens.sensor.toLowerCase().includes(query);
-                return matchesType && matchesQuery;
+                                     lens.sensor.toLowerCase().includes(query) ||
+                                     lens.brand.toLowerCase().includes(query);
+                return matchesType && matchesBrand && matchesQuery;
             });
             displayLenses(filtered);
         }
 
         searchInput.addEventListener('input', applyFilters);
 
+        // Affichage initial
         displayLenses(lenses);
     </script>
 </body>
