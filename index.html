@@ -25,7 +25,7 @@
         <!-- Barre de recherche et filtres (Type + Multi-marques) -->
         <div class="mb-8 flex flex-col lg:flex-row gap-4 justify-between items-center">
             <div class="w-full lg:w-80">
-                <input type="text" id="searchInput" placeholder="Rechercher (ex: Sigma, Exceptionnel, SEL2470)..." 
+                <input type="text" id="searchInput" placeholder="Rechercher (ex: Sigma, SEL2470)..." 
                     class="w-full bg-gray-900 border border-gray-800 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500 transition">
             </div>
             
@@ -59,13 +59,41 @@
                 <table class="w-full text-left border-collapse min-w-[1200px]">
                     <thead>
                         <tr class="border-b border-gray-800 text-xs uppercase tracking-wider text-gray-400 bg-gray-900/80">
-                            <th class="p-4">Objectif (Réf.)</th>
-                            <th class="p-4">Marque</th>
-                            <th class="p-4">Type</th>
-                            <th class="p-4">Ouverture</th>
-                            <th class="p-4">DXOMark Score</th>
-                            <th class="p-4">Neuf</th>
-                            <th class="p-4">Occasion</th>
+                            <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('name')">
+                                <div class="flex items-center gap-1.5">
+                                    Objectif (Réf.) <span id="sort-icon-name" class="text-gray-600">⇅</span>
+                                </div>
+                            </th>
+                            <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('brand')">
+                                <div class="flex items-center gap-1.5">
+                                    Marque <span id="sort-icon-brand" class="text-gray-600">⇅</span>
+                                </div>
+                            </th>
+                            <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('type')">
+                                <div class="flex items-center gap-1.5">
+                                    Type <span id="sort-icon-type" class="text-gray-600">⇅</span>
+                                </div>
+                            </th>
+                            <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('aperture')">
+                                <div class="flex items-center gap-1.5">
+                                    Ouverture <span id="sort-icon-aperture" class="text-gray-600">⇅</span>
+                                </div>
+                            </th>
+                            <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('dxoScore')">
+                                <div class="flex items-center gap-1.5">
+                                    DXOMark Score <span id="sort-icon-dxoScore" class="text-gray-600">⇅</span>
+                                </div>
+                            </th>
+                            <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('newPriceVal')">
+                                <div class="flex items-center gap-1.5">
+                                    Neuf <span id="sort-icon-newPriceVal" class="text-gray-600">⇅</span>
+                                </div>
+                            </th>
+                            <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('usedPriceVal')">
+                                <div class="flex items-center gap-1.5">
+                                    Occasion <span id="sort-icon-usedPriceVal" class="text-gray-600">⇅</span>
+                                </div>
+                            </th>
                             <th class="p-4 w-64">Price History (Min / Max)</th>
                             <th class="p-4 text-right">Action</th>
                         </tr>
@@ -88,10 +116,12 @@
                 ref: "SEL2470GM2",
                 type: "zoom", 
                 aperture: "f/2.8", 
-                dxoScore: "37",
+                dxoScore: 37,
                 dxoQual: "Exceptionnel",
                 newPrice: "2 299 €",
+                newPriceVal: 2299,
                 usedPrice: "Dès 1 989 €",
+                usedPriceVal: 1989,
                 usedState: "Très bon état",
                 historyLabels: ['Jan', 'Fév', 'Mar', 'Avr'],
                 priceHistory: [2499, 2399, 2350, 2299],
@@ -104,10 +134,12 @@
                 ref: "303969",
                 type: "zoom", 
                 aperture: "f/2.8", 
-                dxoScore: "35",
+                dxoScore: 35,
                 dxoQual: "Remarquable",
                 newPrice: "1 349 €",
+                newPriceVal: 1349,
                 usedPrice: "Dès 1 150 €",
+                usedPriceVal: 1150,
                 usedState: "Comme neuf",
                 historyLabels: ['Jan', 'Fév', 'Mar', 'Avr'],
                 priceHistory: [1399, 1379, 1349, 1349],
@@ -120,10 +152,12 @@
                 ref: "A063",
                 type: "zoom", 
                 aperture: "f/2.8", 
-                dxoScore: "34",
+                dxoScore: 34,
                 dxoQual: "Très bon",
                 newPrice: "899 €",
+                newPriceVal: 899,
                 usedPrice: "Dès 750 €",
+                usedPriceVal: 750,
                 usedState: "Bon état",
                 historyLabels: ['Jan', 'Fév', 'Mar', 'Avr'],
                 priceHistory: [949, 919, 899, 899],
@@ -136,10 +170,12 @@
                 ref: "SEL50F14GM",
                 type: "prime", 
                 aperture: "f/1.4", 
-                dxoScore: "42",
+                dxoScore: 42,
                 dxoQual: "Exceptionnel",
                 newPrice: "1 599 €",
+                newPriceVal: 1599,
                 usedPrice: "Dès 1 390 €",
+                usedPriceVal: 1390,
                 usedState: "Comme neuf",
                 historyLabels: ['Jan', 'Fév', 'Mar', 'Avr'],
                 priceHistory: [1699, 1649, 1599, 1599],
@@ -152,10 +188,12 @@
                 ref: "316969",
                 type: "prime", 
                 aperture: "f/1.4", 
-                dxoScore: "44",
+                dxoScore: 44,
                 dxoQual: "Exceptionnel",
                 newPrice: "1 149 €",
+                newPriceVal: 1149,
                 usedPrice: "Dès 980 €",
+                usedPriceVal: 980,
                 usedState: "Très bon état",
                 historyLabels: ['Jan', 'Fév', 'Mar', 'Avr'],
                 priceHistory: [1199, 1169, 1149, 1149],
@@ -167,6 +205,8 @@
         const tableBody = document.getElementById('lensTableBody');
         const searchInput = document.getElementById('searchInput');
         let currentType = 'all';
+        let currentSortColumn = '';
+        let currentSortDirection = 'asc';
 
         function displayLenses(data) {
             tableBody.innerHTML = '';
@@ -269,21 +309,62 @@
             applyFilters();
         }
 
+        window.sortTable = function(column) {
+            if (currentSortColumn === column) {
+                currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSortColumn = column;
+                currentSortDirection = 'asc';
+            }
+
+            // Réinitialiser tous les icônes de tri
+            document.querySelectorAll('[id^="sort-icon-"]').forEach(el => {
+                el.textContent = '⇅';
+                el.className = 'text-gray-600';
+            });
+
+            // Mettre à jour l'icône de la colonne active
+            const activeIcon = document.getElementById(`sort-icon-${column}`);
+            if (activeIcon) {
+                activeIcon.textContent = currentSortDirection === 'asc' ? '▲' : '▼';
+                activeIcon.className = 'text-orange-500 font-bold';
+            }
+
+            applyFilters();
+        }
+
         function applyFilters() {
             const query = searchInput.value.toLowerCase();
             const selectedBrands = Array.from(document.querySelectorAll('.brand-checkbox:checked')).map(cb => cb.value);
 
-            const filtered = lenses.filter(lens => {
+            let filtered = lenses.filter(lens => {
                 const matchesType = currentType === 'all' || lens.type === currentType;
                 const matchesBrand = selectedBrands.includes(lens.brand);
                 const matchesQuery = lens.name.toLowerCase().includes(query) || 
                                      lens.ref.toLowerCase().includes(query) || 
                                      lens.aperture.toLowerCase().includes(query) || 
-                                     lens.dxoScore.toLowerCase().includes(query) ||
-                                     lens.dxoQual.toLowerCase().includes(query) ||
+                                     lens.dxoScore.toString().toLowerCase().includes(query) ||
                                      lens.brand.toLowerCase().includes(query);
                 return matchesType && matchesBrand && matchesQuery;
             });
+
+            // Application du tri si une colonne est sélectionnée
+            if (currentSortColumn) {
+                filtered.sort((a, b) => {
+                    let valA = a[currentSortColumn];
+                    let valB = b[currentSortColumn];
+
+                    if (typeof valA === 'string') {
+                        valA = valA.toLowerCase();
+                        valB = valB.toLowerCase();
+                    }
+
+                    if (valA < valB) return currentSortDirection === 'asc' ? -1 : 1;
+                    if (valA > valB) return currentSortDirection === 'asc' ? 1 : -1;
+                    return 0;
+                });
+            }
+
             displayLenses(filtered);
         }
 
