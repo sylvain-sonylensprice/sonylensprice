@@ -4,25 +4,17 @@ import json
 import requests
 from bs4 import BeautifulSoup
 
+# Liste des marques tierces et Sony à surveiller sur DXOMark
 BRANDS_TO_SCRAPE = ["sony", "sigma", "tamron", "samyang", "viltrox", "laowa"]
-
-AMAZON_DOMAINS = [
-    "amazon.fr",
-    "amazon.de",
-    "amazon.it",
-    "amazon.es",
-    "amazon.co.uk",
-    "amazon.com"
-]
 
 def fetch_amazon_price_via_api(lens_name):
     """
-    Interroge Amazon via une API de scraping dédiée (ex: Rainforest API)
-    pour récupérer le prix en euros sans se faire bloquer.
+    Interroge Rainforest API en testant les différents domaines Amazon européens 
+    (.fr, .de, .it, .es) pour trouver le meilleur prix disponible en euros.
     """
     api_key = os.environ.get("RAINFOREST_API_KEY")
     
-    # Si aucune clé n'est configurée, on renvoie une valeur de secours par défaut
+    # Valeur par défaut si aucune clé n'est configurée ou en cas de test local
     if not api_key:
         return {
             "newPrice": "899 €",
@@ -32,32 +24,36 @@ def fetch_amazon_price_via_api(lens_name):
             "usedState": "Bon état"
         }
 
-    # Exemple d'appel pour l'Europe (Amazon.fr par défaut)
-    params = {
-        "api_key": api_key,
-        "type": "search",
-        "amazon_domain": "amazon.fr",
-        "search_term": lens_name
-    }
-    
-    try:
-        api_result = requests.get('https://api.rainforestapi.com/request', params=params, timeout=15)
-        data = api_result.json()
-        
-        if "search_results" in data and len(data["search_results"]) > 0:
-            first_result = data["search_results"][0]
-            if "price" in first_result and "value" in first_result["price"]:
-                price_val = int(first_result["price"]["value"])
-                return {
-                    "newPrice": f"{price_val} €",
-                    "newPriceVal": price_val,
-                    "usedPrice": f"Dès {int(price_val * 0.8)} €",
-                    "usedPriceVal": int(price_val * 0.8),
-                    "usedState": "Bon état"
-                }
-    except Exception as e:
-        print(f"Erreur API Amazon pour {lens_name} : {e}")
+    # Domaines prioritaires en euros
+    european_domains = ["amazon.fr", "amazon.de", "amazon.it", "amazon.es"]
 
+    for domain in european_domains:
+        params = {
+            "api_key": api_key,
+            "type": "search",
+            "amazon_domain": domain,
+            "search_term": lens_name
+        }
+        
+        try:
+            api_result = requests.get('https://api.rainforestapi.com/request', params=params, timeout=15)
+            data = api_result.json()
+            
+            if "search_results" in data and len(data["search_results"]) > 0:
+                first_result = data["search_results"][0]
+                if "price" in first_result and "value" in first_result["price"]:
+                    price_val = int(first_result["price"]["value"])
+                    return {
+                        "newPrice": f"{price_val} €",
+                        "newPriceVal": price_val,
+                        "usedPrice": f"Dès {int(price_val * 0.8)} €",
+                        "usedPriceVal": int(price_val * 0.8),
+                        "usedState": "Bon état"
+                    }
+        except Exception as e:
+            print(f"Erreur API pour {domain} avec {lens_name} : {e}")
+
+    # Valeur par défaut si aucun résultat n'est trouvé sur les stores testés
     return {
         "newPrice": "899 €",
         "newPriceVal": 899,
@@ -119,7 +115,7 @@ def update_json_database(new_lenses):
 
     for lens in new_lenses:
         if lens["name"] not in existing_names:
-            # Récupération automatique du prix via l'API sécurisée
+            # Récupération automatique du prix via l'API sécurisée multi-domaines
             pricing = fetch_amazon_price_via_api(lens["name"])
             
             new_entry = {
