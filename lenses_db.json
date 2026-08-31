@@ -1,1 +1,57 @@
-[]
+[
+    {
+        "name": "Sony FE 24-70mm F2.8 GM II",
+        "brand": "Sony",
+        "ref": "SEL2470GM2",
+        "type": "zoom",
+        "aperture": "f/2.8",
+        "dxoScore": 45,
+        "dxoQual": "Testé",
+        "dxoLink": "https://www.dxomark.com",
+        "newPrice": "1499 €",
+        "newPriceVal": 1499,
+        "usedPrice": "Dès 1199 €",
+        "usedPriceVal": 1199,
+        "usedState": "Bon état",
+        "historyData": {
+            "1M": {
+                "labels": [
+                    "S1",
+                    "S2",
+                    "S3",
+                    "S4"
+                ],
+                "prices": [
+                    1499,
+                    1499,
+                    1499,
+                    1499
+                ]
+            },
+            "6M": {
+                "labels": [
+                    "August 2026"
+                ],
+                "prices": [
+                    1499
+                ]
+            },
+            "1Y": {
+                "labels": [
+                    "August 2026"
+                ],
+                "prices": [
+                    1499
+                ]
+            },
+            "ALL": {
+                "labels": [
+                    "August 2026"
+                ],
+                "prices": [
+                    1499
+                ]
+            }
+        }
+    }
+]
