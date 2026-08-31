@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SonyLensPrice - Comparateur d'objectifs photo Sony & Tiers (avec DXOMark)</title>
+    <title>SonyLensPrice - Comparateur d'objectifs photo Sony & Tiers (DXOMark)</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js -->
@@ -15,7 +15,7 @@
     <header class="border-b border-gray-800 bg-gray-900/50 backdrop-blur sticky top-0 z-20">
         <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <h1 class="text-xl font-bold tracking-tight text-orange-500">SonyLens<span class="text-white">Price</span></h1>
-            <span class="text-sm text-gray-400">Optiques Sony & Tiers | Performances DXOMark</span>
+            <span class="text-sm text-gray-400">Optiques Sony & Tiers | Évaluations DXOMark</span>
         </div>
     </header>
 
@@ -25,7 +25,7 @@
         <!-- Barre de recherche et filtres (Type + Multi-marques) -->
         <div class="mb-8 flex flex-col lg:flex-row gap-4 justify-between items-center">
             <div class="w-full lg:w-80">
-                <input type="text" id="searchInput" placeholder="Rechercher (ex: Sigma, DXO, SEL2470)..." 
+                <input type="text" id="searchInput" placeholder="Rechercher (ex: Sigma, Exceptionnel, SEL2470)..." 
                     class="w-full bg-gray-900 border border-gray-800 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500 transition">
             </div>
             
@@ -79,7 +79,7 @@
 
     </main>
 
-    <!-- Script de gestion et données enrichies DXOMark -->
+    <!-- Script de gestion -->
     <script>
         const lenses = [
             { 
@@ -89,7 +89,7 @@
                 type: "zoom", 
                 aperture: "f/2.8", 
                 dxoScore: "37",
-                dxoSharpness: "28 Mpix",
+                dxoQual: "Exceptionnel",
                 newPrice: "2 299 €",
                 usedPrice: "Dès 1 989 €",
                 usedState: "Très bon état",
@@ -105,7 +105,7 @@
                 type: "zoom", 
                 aperture: "f/2.8", 
                 dxoScore: "35",
-                dxoSharpness: "26 Mpix",
+                dxoQual: "Remarquable",
                 newPrice: "1 349 €",
                 usedPrice: "Dès 1 150 €",
                 usedState: "Comme neuf",
@@ -121,7 +121,7 @@
                 type: "zoom", 
                 aperture: "f/2.8", 
                 dxoScore: "34",
-                dxoSharpness: "25 Mpix",
+                dxoQual: "Très bon",
                 newPrice: "899 €",
                 usedPrice: "Dès 750 €",
                 usedState: "Bon état",
@@ -137,7 +137,7 @@
                 type: "prime", 
                 aperture: "f/1.4", 
                 dxoScore: "42",
-                dxoSharpness: "33 Mpix",
+                dxoQual: "Exceptionnel",
                 newPrice: "1 599 €",
                 usedPrice: "Dès 1 390 €",
                 usedState: "Comme neuf",
@@ -153,7 +153,7 @@
                 type: "prime", 
                 aperture: "f/1.4", 
                 dxoScore: "44",
-                dxoSharpness: "35 Mpix",
+                dxoQual: "Exceptionnel",
                 newPrice: "1 149 €",
                 usedPrice: "Dès 980 €",
                 usedState: "Très bon état",
@@ -191,7 +191,7 @@
                     <td class="p-4">
                         <div class="flex items-center gap-2">
                             <span class="px-2 py-0.5 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-bold text-xs rounded">${lens.dxoScore}/50</span>
-                            <span class="text-xs text-gray-400">(${lens.dxoSharpness})</span>
+                            <span class="text-xs text-gray-300 font-medium">${lens.dxoQual}</span>
                         </div>
                     </td>
                     <td class="p-4 font-semibold text-orange-400">${lens.newPrice}</td>
@@ -280,6 +280,7 @@
                                      lens.ref.toLowerCase().includes(query) || 
                                      lens.aperture.toLowerCase().includes(query) || 
                                      lens.dxoScore.toLowerCase().includes(query) ||
+                                     lens.dxoQual.toLowerCase().includes(query) ||
                                      lens.brand.toLowerCase().includes(query);
                 return matchesType && matchesBrand && matchesQuery;
             });
