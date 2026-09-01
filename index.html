@@ -133,7 +133,7 @@
         let currentSortDirection = 'asc';
         let currentPeriod = '6M';
 
-       async function loadDatabase() {
+        async function loadDatabase() {
             try {
                 const response = await fetch('lenses_db.json');
                 if (!response.ok) throw new Error("Impossible de charger la base de données");
@@ -177,12 +177,12 @@
 
         function applyFilters() {
             const query = searchInput.value.toLowerCase();
-            const checkedBrands = Array.from(document.querySelectorAll('.brand-checkbox:checked')).map(cb => cb.value);
+            const checkedBrands = Array.from(document.querySelectorAll('.brand-checkbox:checked')).map(cb => cb.value.toLowerCase());
 
             const filtered = lenses.filter(lens => {
                 const matchesSearch = (lens.name && lens.name.toLowerCase().includes(query)) || (lens.brand && lens.brand.toLowerCase().includes(query));
                 const matchesType = currentType === 'all' || (lens.type && lens.type.toLowerCase() === currentType);
-                const matchesBrand = checkedBrands.includes(lens.brand);
+                const matchesBrand = !lens.brand || checkedBrands.includes(lens.brand.toLowerCase());
                 return matchesSearch && matchesType && matchesBrand;
             });
 
@@ -193,3 +193,6 @@
 
         // Lancement au chargement de la page
         loadDatabase();
+    </script>
+</body>
+</html>
