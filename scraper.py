@@ -3,7 +3,6 @@ import os
 import json
 import requests
 
-# Correspondance des domaines Amazon et de leurs devises/codes
 AMAZON_TARGETS = {
     "US": {"domain": "amazon.com", "currency": "USD", "symbol": "$"},
     "UK": {"domain": "amazon.co.uk", "currency": "GBP", "symbol": "£"},
@@ -15,17 +14,15 @@ AMAZON_TARGETS = {
     "AU": {"domain": "amazon.com.au", "currency": "AUD", "symbol": "AU$"},
     "IN": {"domain": "amazon.in", "currency": "INR", "symbol": "₹"},
     "SE": {"domain": "amazon.se", "currency": "SEK", "symbol": "kr"},
-    "IE": {"domain": "amazon.co.uk", "currency": "GBP", "symbol": "£"} # L'Irlande route souvent sur .co.uk ou .de
+    "IE": {"domain": "amazon.co.uk", "currency": "GBP", "symbol": "£"}
 }
 
-def fetch_amazon_price_via_api(lens_name, market_key="FR"):
+def fetch_price_for_domain(lens_name, target):
     api_key = os.environ.get("RAINFOREST_API_KEY")
     if not api_key:
         print("Erreur : RAINFOREST_API_KEY non trouvée dans les secrets !")
         return None
 
-    target = AMAZON_TARGETS.get(market_key, AMAZON_TARGETS["FR"])
-    
     params = {
         "api_key": api_key,
         "type": "search",
@@ -47,25 +44,26 @@ def fetch_amazon_price_via_api(lens_name, market_key="FR"):
                     "newPriceVal": price_val,
                     "usedPrice": f"Dès {int(price_val * 0.8)} {symbol}",
                     "usedPriceVal": int(price_val * 0.8),
-                    "usedState": "Bon état",
-                    "domain": target["domain"]
+                    "url": first_result.get("link", "#")
                 }
     except Exception as e:
         print(f"Erreur API pour {target['domain']} : {e}")
     return None
 
-def update_json_database():
+def update_global_database():
     db_file = "lenses_db.json"
-    test_lens_name = "Sony FE 24-70mm F2.8 GM II"
     
-    # Exemple de collecte multi-marchés (par défaut ciblé sur la France, extensible à la boucle)
-    market = "FR"
-    print(f"Recherche du prix pour : {test_lens_name} sur le marché {market}")
-    
-    pricing = fetch_amazon_price_via_api(test_lens_name, market)
-    if not pricing:
-        print("Impossible de récupérer le prix via l'API.")
-        return
+    # Liste des objectifs à suivre (références ou noms complets)
+    lenses_to_track = [
+        {
+            "name": "Sony FE 24-70mm F2.8 GM II",
+            "ref": "SEL2470GM2",
+            "brand": "Sony",
+            "type": "zoom",
+            "aperture": "f/2.8",
+            "dxoScore": 45
+        }
+    ]
 
     try:
         with open(db_file, "r", encoding="utf-8") as f:
@@ -73,38 +71,58 @@ def update_json_database():
     except (FileNotFoundError, json.JSONDecodeError):
         database = []
 
-    existing_names = {item["name"] for item in database}
     current_date_str = datetime.now().strftime("%B %Y")
 
-    if test_lens_name not in existing_names:
-        new_entry = {
-            "name": test_lens_name,
-            "brand": "Sony",
-            "ref": "SEL2470GM2",
-            "type": "zoom",
-            "aperture": "f/2.8",
-            "dxoScore": 45,
-            "dxoQual": "Testé",
-            "dxoLink": "https://www.dxomark.com",
-            "newPrice": pricing["newPrice"],
-            "newPriceVal": pricing["newPriceVal"],
-            "usedPrice": pricing["usedPrice"],
-            "usedPriceVal": pricing["usedPriceVal"],
-            "usedState": pricing["usedState"],
-            "historyData": {
-                "1M": { "labels": ['S1', 'S2', 'S3', 'S4'], "prices": [pricing["newPriceVal"], pricing["newPriceVal"], pricing["newPriceVal"], pricing["newPriceVal"]] },
-                "6M": { "labels": [current_date_str], "prices": [pricing["newPriceVal"]] },
-                "1Y": { "labels": [current_date_str], "prices": [pricing["newPriceVal"]] },
-                "ALL": { "labels": [current_date_str], "prices": [pricing["newPriceVal"]] }
+    for lens_def in lenses_to_track:
+        print(f"\n--- Traitement de : {lens_def['name']} ---")
+        prices_by_market = {}
+
+        for market_key, target in AMAZON_TARGETS.items():
+            print(f"Interrogation de {target['domain']} ({market_key})...")
+            res = fetch_price_for_domain(lens_def["name"], target)
+            if res:
+                prices_by_market[market_key] = res
+
+        # Recherche si l'objectif existe déjà dans la base
+        existing_item = next((item for item in database if item["name"] == lens_def["name"]), None)
+
+        if existing_item:
+            # Mise à jour des prix par marché
+            existing_item["prices_by_market"] = prices_by_market
+            # Maintien d'un prix de référence principal (ex: FR ou US) s'il existe
+            if "FR" in prices_by_market:
+                existing_item["newPrice"] = prices_by_market["FR"]["newPrice"]
+                existing_item["newPriceVal"] = prices_by_market["FR"]["newPriceVal"]
+                existing_item["usedPrice"] = prices_by_market["FR"]["usedPrice"]
+                existing_item["usedPriceVal"] = prices_by_market["FR"]["usedPriceVal"]
+                existing_item["url"] = prices_by_market["FR"]["url"]
+            print(f"Mise à jour des prix pour {lens_def['name']}")
+        else:
+            # Création d'une nouvelle entrée complète
+            fr_data = prices_by_market.get("FR", {"newPrice": "N/C", "newPriceVal": 0, "usedPrice": "N/C", "usedPriceVal": 0, "url": "#"})
+            new_entry = {
+                "name": lens_def["name"],
+                "brand": lens_def["brand"],
+                "ref": lens_def["ref"],
+                "type": lens_def["type"],
+                "aperture": lens_def["aperture"],
+                "dxoScore": lens_def["dxoScore"],
+                "newPrice": fr_data["newPrice"],
+                "newPriceVal": fr_data["newPriceVal"],
+                "usedPrice": fr_data["usedPrice"],
+                "usedPriceVal": fr_data["usedPriceVal"],
+                "url": fr_data["url"],
+                "prices_by_market": prices_by_market,
+                "historyData": {
+                    "6M": { "labels": [current_date_str], "prices": [fr_data["newPriceVal"]] }
+                }
             }
-        }
-        database.append(new_entry)
-        
-        with open(db_file, "w", encoding="utf-8") as f:
-            json.dump(database, f, ensure_ascii=False, indent=4)
-        print("Base de données mise à jour avec succès via Rainforest API !")
-    else:
-        print("L'objectif est déjà présent dans le fichier JSON.")
+            database.append(new_entry)
+            print(f"Ajout de {lens_def['name']} dans la base.")
+
+    with open(db_file, "w", encoding="utf-8") as f:
+        json.dump(database, f, ensure_ascii=False, indent=4)
+    print("\nBase de données globalement synchronisée !")
 
 if __name__ == "__main__":
-    update_json_database()
+    update_global_database()
