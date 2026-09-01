@@ -82,28 +82,8 @@
     </div>
 
     <script>
-      // Au lieu d'avoir un tableau statique "const lenses = [...]", on déclare une variable vide :
-let lenses = [];
-
-// Fonction pour charger dynamiquement le fichier lenses_db.json généré par le scraper Python
-async function loadLensesData() {
-    try {
-        const response = await fetch('lenses_db.json');
-        if (!response.ok) {
-            throw new Error(`Erreur HTTP: ${response.status}`);
-        }
-        lenses = await response.json();
-        
-        // Une fois les données chargées, on applique les filtres et on dessine le tableau
-        applyFilters();
-    } catch (error) {
-        console.error("Impossible de charger la base de données des objectifs :", error);
-        tableBody.innerHTML = `<tr><td colspan="10" class="p-4 text-center text-red-500">Erreur de chargement des données de prix.</td></tr>`;
-    }
-}
-
-// Lancer le chargement au démarrage de la page
-loadLensesData();
+        // Variable globale qui recevra les données du fichier JSON du scraper
+        let lenses = [];
 
         let activeCharts = {};
         const tableBody = document.getElementById('lensTableBody');
@@ -112,6 +92,21 @@ loadLensesData();
         let currentSortColumn = '';
         let currentSortDirection = 'asc';
         let currentPeriod = '6M';
+
+        // Fonction asynchrone pour charger lenses_db.json
+        async function loadLensesData() {
+            try {
+                const response = await fetch('lenses_db.json');
+                if (!response.ok) {
+                    throw new Error(`Erreur HTTP: ${response.status}`);
+                }
+                lenses = await response.json();
+                applyFilters();
+            } catch (error) {
+                console.error("Impossible de charger lenses_db.json :", error);
+                tableBody.innerHTML = `<tr><td colspan="10" class="p-4 text-center text-red-500">Erreur de chargement des données de prix.</td></tr>`;
+            }
+        }
 
         function renderTable(data) {
             Object.keys(activeCharts).forEach(id => {
@@ -151,7 +146,10 @@ loadLensesData();
                 `;
                 tableBody.appendChild(row);
 
-                if (lens.history && lens.history[currentPeriod]) {
+                // Gestion flexible de l'historique (compatibilité 'history' ou 'historyData')
+                const historyObj = lens.history || lens.historyData;
+
+                if (historyObj && historyObj[currentPeriod]) {
                     setTimeout(() => {
                         const canvasEl = document.getElementById(`chart-${index}`);
                         if (canvasEl) {
@@ -159,9 +157,9 @@ loadLensesData();
                             activeCharts[index] = new Chart(ctx, {
                                 type: 'line',
                                 data: {
-                                    labels: lens.history[currentPeriod].labels || [],
+                                    labels: historyObj[currentPeriod].labels || [],
                                     datasets: [{
-                                        data: lens.history[currentPeriod].prices || [],
+                                        data: historyObj[currentPeriod].prices || [],
                                         borderColor: '#f97316',
                                         borderWidth: 2,
                                         pointRadius: 2,
@@ -283,7 +281,9 @@ loadLensesData();
         }
 
         searchInput.addEventListener('input', applyFilters);
-        applyFilters();
+
+        // Lancement du chargement de la base au démarrage
+        loadLensesData();
     </script>
 </body>
 </html>
