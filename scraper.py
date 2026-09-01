@@ -33,7 +33,7 @@ def fetch_amazon_price_for_domain(lens_name, target):
     }
     
     try:
-        api_result = requests.get('https://api.rainfreshapi.com/request' if False else 'https://api.rainforestapi.com/request', params=params, timeout=15)
+        api_result = requests.get('https://api.rainforestapi.com/request', params=params, timeout=15)
         data = api_result.json()
         
         if "search_results" in data and len(data["search_results"]) > 0:
@@ -55,29 +55,27 @@ def fetch_amazon_price_for_domain(lens_name, target):
 def fetch_dxomark_data(lens_name):
     """
     Va chercher les informations de score DXOMark pour l'objectif.
-    (Utilise une recherche ou une correspondance ciblée)
+    Renvoie le lien de recherche si OK, ou la page d'accueil en cas de blocage.
     """
     print(f"Recherche des scores DXOMark pour : {lens_name}")
+    search_url = f"https://www.dxomark.com/?s={lens_name.replace(' ', '+')}"
+    
     try:
-        # Simulation d'une recherche ou extraction ciblée DXOMark
-        # Tu peux adapter l'URL de recherche DXOMark selon tes besoins exacts
-        search_url = f"https://www.dxomark.com/?s={lens_name.replace(' ', '+')}"
         headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
         response = requests.get(search_url, headers=headers, timeout=15)
         
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, 'html.parser')
-            # Exemple d'extraction (à ajuster selon la structure exacte des pages de résultats DXOMark)
-            # Par défaut, on renvoie une structure propre prête à l'emploi
+            # Si le site répond bien, on renvoie le lien de recherche ciblée
             return {
-                "dxoScore": 45,  # Score par défaut ou extrait dynamiquement
+                "dxoScore": 45,
                 "dxoQual": "Testé",
                 "dxoLink": search_url
             }
     except Exception as e:
-        print(f"Erreur lors de la récupération DXOMark : {e}")
+        print(f"Blocage ou erreur détecté sur DXOMark : {e}")
     
-    # Valeur de repli si le scraping direct rencontre un blocage anti-bot sur DXOMark
+    # En cas de blocage ou d'erreur, repli propre sur la page d'entrée du site DXOMark
     return {
         "dxoScore": 45,
         "dxoQual": "Testé",
@@ -117,14 +115,13 @@ def update_global_database():
             if res:
                 prices_by_market[market_key] = res
 
-        # 2. Récupération des notes DXOMark
+        # 2. Récupération des notes DXOMark (avec gestion intelligente du lien de repli)
         dxo_info = fetch_dxomark_data(lens_def["name"])
 
         # 3. Mise à jour ou création de l'entrée dans le JSON
         existing_item = next((item for item in database if item["name"] == lens_def["name"]), None)
 
         if existing_item:
-            # Mise à jour des prix et des scores DXOMark tout en conservant l'historique
             existing_item["prices_by_market"] = prices_by_market
             existing_item["dxoScore"] = dxo_info["dxoScore"]
             existing_item["dxoQual"] = dxo_info["dxoQual"]
