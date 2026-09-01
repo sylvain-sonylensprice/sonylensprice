@@ -27,7 +27,7 @@
                 
                 <div class="flex flex-wrap gap-4 w-full lg:w-auto justify-between lg:justify-end items-center">
                     <div class="flex items-center gap-2 bg-gray-900 px-3 py-1.5 border border-gray-800 rounded-lg text-xs">
-                        <span class="text-gray-400 font-medium">Période :</span>
+                        <span class="text-gray-400 font-medium">Période d'historique de prix :</span>
                         <select id="globalPeriodSelect" onchange="changeGlobalPeriod(this.value)" class="bg-gray-950 text-orange-400 font-semibold border border-gray-800 rounded px-2 py-1 focus:outline-none focus:border-orange-500">
                             <option value="1M">1 mois</option>
                             <option value="6M" selected>6 mois</option>
@@ -56,7 +56,7 @@
 
             <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-xl mb-12">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse min-w-[1200px]">
+                    <table class="w-full text-left border-collapse min-w-[1300px]">
                         <thead>
                             <tr class="border-b border-gray-800 text-xs uppercase tracking-wider text-gray-400 bg-gray-900/80">
                                 <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('name')">
@@ -67,6 +67,11 @@
                                 <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('brand')">
                                     <div class="flex items-center gap-1.5">
                                         Marque <span id="sort-icon-brand" class="text-gray-600">⇅</span>
+                                    </div>
+                                </th>
+                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('mount')">
+                                    <div class="flex items-center gap-1.5">
+                                        Monture <span id="sort-icon-mount" class="text-gray-600">⇅</span>
                                     </div>
                                 </th>
                                 <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('type')">
@@ -141,26 +146,35 @@
                 renderTable(lenses);
             } catch (error) {
                 console.error("Erreur:", error);
-                tableBody.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-red-400">Erreur lors du chargement des données.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="10" class="p-4 text-center text-red-400">Erreur lors du chargement des données.</td></tr>`;
             }
         }
 
         function renderTable(data) {
             tableBody.innerHTML = '';
             if (data.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="9" class="p-4 text-center text-gray-500">Aucun objectif trouvé.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="10" class="p-4 text-center text-gray-500">Aucun objectif trouvé.</td></tr>`;
                 return;
             }
 
             data.forEach((lens, index) => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-900/50 transition';
+
+                const lensRef = lens.ref || lens.code || lens.reference || '';
+                const refDisplay = lensRef ? `<span class="block text-xs text-orange-400 font-mono mt-0.5">${lensRef}</span>` : '';
+                const scoreDisplay = lens.dxoScore ? `${lens.dxoScore} <span class="text-xs text-gray-500 font-normal">/ 100</span>` : '-';
+
                 row.innerHTML = `
-                    <td class="p-4 font-medium text-white">${lens.name || '-'}</td>
+                    <td class="p-4 font-medium text-white">
+                        ${lens.name || '-'}
+                        ${refDisplay}
+                    </td>
                     <td class="p-4 text-gray-300">${lens.brand || '-'}</td>
+                    <td class="p-4 text-gray-300"><span class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded font-mono">${lens.mount || 'E-mount'}</span></td>
                     <td class="p-4 text-gray-400">${lens.type || '-'}</td>
                     <td class="p-4 text-gray-300">${lens.aperture || '-'}</td>
-                    <td class="p-4 font-semibold text-orange-400">${lens.dxoScore || '-'}</td>
+                    <td class="p-4 font-semibold text-orange-400">${scoreDisplay}</td>
                     <td class="p-4 text-gray-200">${lens.newPrice || 'N/C'}</td>
                     <td class="p-4 text-gray-300">${lens.usedPrice || 'N/C'}</td>
                     <td class="p-4">
@@ -172,7 +186,6 @@
                 `;
                 tableBody.appendChild(row);
 
-                // Initialisation optionnelle du graphique si les données d'historique existent
                 if (lens.history && lens.history[currentPeriod]) {
                     const ctx = document.getElementById(`chart-${index}`).getContext('2d');
                     new Chart(ctx, {
@@ -204,7 +217,6 @@
         function filterType(type) {
             currentType = type;
             
-            // Mise à jour visuelle des boutons de type
             ['all', 'zoom', 'prime'].forEach(t => {
                 const btn = document.getElementById(`btn-type-${t}`);
                 if (btn) {
@@ -254,7 +266,11 @@
             const checkedBrands = Array.from(document.querySelectorAll('.brand-checkbox:checked')).map(cb => cb.value.toLowerCase());
 
             const filtered = lenses.filter(lens => {
-                const matchesSearch = (lens.name && lens.name.toLowerCase().includes(query)) || (lens.brand && lens.brand.toLowerCase().includes(query));
+                const matchesSearch = (lens.name && lens.name.toLowerCase().includes(query)) || 
+                                      (lens.brand && lens.brand.toLowerCase().includes(query)) ||
+                                      (lens.ref && lens.ref.toLowerCase().includes(query)) ||
+                                      (lens.code && lens.code.toLowerCase().includes(query)) ||
+                                      (lens.mount && lens.mount.toLowerCase().includes(query));
                 const matchesType = currentType === 'all' || (lens.type && lens.type.toLowerCase() === currentType);
                 const matchesBrand = !lens.brand || checkedBrands.includes(lens.brand.toLowerCase());
                 return matchesSearch && matchesType && matchesBrand;
@@ -275,7 +291,6 @@
 
         searchInput.addEventListener('input', applyFilters);
 
-        // Lancement au chargement de la page
         loadDatabase();
     </script>
 </body>
