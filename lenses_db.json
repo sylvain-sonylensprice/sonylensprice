@@ -1,252 +1,85 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SonyLensPrice - Comparateur d'objectifs photo Sony & Tiers (DXOMark)</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body class="bg-gray-950 text-gray-100 min-h-screen font-sans flex flex-col justify-between">
-
-    <div>
-        <header class="border-b border-gray-800 bg-gray-900/50 backdrop-blur sticky top-0 z-20">
-            <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-                <h1 class="text-xl font-bold tracking-tight text-orange-500">SonyLens<span class="text-white">Price</span></h1>
-                <span class="text-sm text-gray-400">Optiques Sony & Tiers | Évaluations DXOMark</span>
-            </div>
-        </header>
-
-        <main class="max-w-7xl mx-auto px-4 py-8">
-            
-            <div class="mb-8 flex flex-col lg:flex-row gap-4 justify-between items-center">
-                <div class="w-full lg:w-72">
-                    <input type="text" id="searchInput" placeholder="Rechercher (ex: Sigma, SEL2470)..." 
-                        class="w-full bg-gray-900 border border-gray-800 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500 transition">
-                </div>
-                
-                <div class="flex flex-wrap gap-4 w-full lg:w-auto justify-between lg:justify-end items-center">
-                    <div class="flex items-center gap-2 bg-gray-900 px-3 py-1.5 border border-gray-800 rounded-lg text-xs">
-                        <span class="text-gray-400 font-medium">Période d'historique de prix :</span>
-                        <select id="globalPeriodSelect" onchange="changeGlobalPeriod(this.value)" class="bg-gray-950 text-orange-400 font-semibold border border-gray-800 rounded px-2 py-1 focus:outline-none focus:border-orange-500">
-                            <option value="1M">1 mois</option>
-                            <option value="6M" selected>6 mois</option>
-                            <option value="1Y">1 an</option>
-                            <option value="ALL">Depuis l'origine</option>
-                        </select>
-                    </div>
-
-                    <div class="flex gap-1.5 bg-gray-900 p-1 border border-gray-800 rounded-lg">
-                        <button onclick="filterType('all')" id="btn-type-all" class="px-3 py-1.5 text-xs bg-gray-800 text-white rounded-md transition font-medium">Tous types</button>
-                        <button onclick="filterType('zoom')" id="btn-type-zoom" class="px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition">Zooms</button>
-                        <button onclick="filterType('prime')" id="btn-type-prime" class="px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition">Fixes</button>
-                    </div>
-
-                    <div class="flex items-center gap-3 bg-gray-900 px-3 py-1.5 border border-gray-800 rounded-lg text-xs flex-wrap">
-                        <span class="text-gray-400 font-medium">Marques :</span>
-                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200"><input type="checkbox" value="Sony" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Sony</label>
-                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200"><input type="checkbox" value="Sigma" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Sigma</label>
-                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200"><input type="checkbox" value="Tamron" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Tamron</label>
-                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200"><input type="checkbox" value="Samyang" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Samyang</label>
-                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200"><input type="checkbox" value="Viltrox" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Viltrox</label>
-                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200"><input type="checkbox" value="Laowa" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Laowa</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-xl mb-12">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse min-w-[1300px]">
-                        <thead>
-                            <tr class="border-b border-gray-800 text-xs uppercase tracking-wider text-gray-400 bg-gray-900/80">
-                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('name')">Objectif (Réf.)</th>
-                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('brand')">Marque</th>
-                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('mount')">Monture</th>
-                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('type')">Type</th>
-                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('aperture')">Ouverture</th>
-                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('dxoScore')">DXOMark Score</th>
-                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('newPriceVal')">Neuf</th>
-                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('usedPriceVal')">Occasion</th>
-                                <th class="p-4 w-72">Historique Prix</th>
-                                <th class="p-4 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="lensTableBody" class="divide-y divide-gray-800 text-sm">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <script>
-        let lenses = [];
-        let activeCharts = {}; // Pour détruire proprement les instances Chart.js existantes et éviter les fuites mémoire / bugs
-        const tableBody = document.getElementById('lensTableBody');
-        const searchInput = document.getElementById('searchInput');
-        let currentType = 'all';
-        let currentSortColumn = '';
-        let currentSortDirection = 'asc';
-        let currentPeriod = '6M';
-
-        async function loadDatabase() {
-            try {
-                const response = await fetch('lenses_db.json');
-                if (!response.ok) throw new Error("Erreur de chargement du fichier JSON");
-                lenses = await response.json();
-                applyFilters();
-            } catch (error) {
-                console.error("Erreur:", error);
-                tableBody.innerHTML = `<tr><td colspan="10" class="p-4 text-center text-red-400">Impossible de charger 'lenses_db.json'. Vérifiez que le fichier est bien présent sur votre serveur local.</td></tr>`;
+[
+    {
+        "name": "Sony FE 24-70mm F2.8 GM II",
+        "brand": "Sony",
+        "ref": "SEL2470GM2",
+        "type": "zoom",
+        "aperture": "f/2.8",
+        "dxoScore": 45,
+        "dxoQual": "Testé",
+        "dxoLink": "https://www.dxomark.com/?s=Sony+FE+24-70mm+F2.8+GM+II",
+        "newPrice": "1499.0 €",
+        "newPriceVal": 1499.0,
+        "usedPrice": "Dès 1199 €",
+        "usedPriceVal": 1199,
+        "url": "https://www.amazon.fr/sspa/click?ie=UTF8&spc=MTozNDY5MTUyODMzODYyNDkwOjE3ODgyMjU4OTE6c3BfYXRmOjMwMDM0MTQ3ODUwOTMzMjo6MDo6&url=%2FSony-SEL2470GM-zoom-FE-24-70%2Fdp%2FB01BUAVMQY%2Fref%3Dsr_1_1_sspa%3Fdib%3DeyJ2IjoiMSJ9.n35xxwSfCHxbtPokk7-7mZDRPI1pEmPEYp9YM-R9uSR0Seouq0tqfb2qWY-XBCvMfN83b1wH_EIP4TQdYpxgnj4y_cCHGovEEEsljfAKEz5h4Kz0HiVuk7IJbbL2Nw4_3IVRorfDwUZ4qu9q734NdkbPqiqU4IQdySxR2jup0LPW5oL3zsn952EEnWm-XldpxZK8eJCE9mRIdwe7hjPXurD1PoyEJ5qjQQ327sm4fTUyq9eD_gKy5VRVJkQ-jCyLPkIGxh-rY_0f5cTe3l7i8LF4b7RxRWQpzInFqjpLGLg.vPmUOvObUhaiAPj198vH3dxQ-3w8OlGz6vb3QT_OWsg%26dib_tag%3Dse%26keywords%3DSony%2BFE%2B24-70mm%2BF2.8%2BGM%2BII%26qid%3D1788225891%26sr%3D8-1-spons%26aref%3Dy2hK6LTlFi%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9hdGY%26psc%3D1&aref=y2hK6LTlFi&sp_cr=ZAZ",
+        "prices_by_market": {
+            "US": {
+                "newPrice": "1719.95 $",
+                "newPriceVal": 1719.95,
+                "usedPrice": "Dès 1375 $",
+                "usedPriceVal": 1375,
+                "url": "https://www.amazon.com/sspa/click?ie=UTF8&spc=MTozOTUxNTc2Njk4MjM5Mjk3OjE3ODgyMjU4NjI6c3BfYXRmOjMwMDA2Nzk0NTg5NTUwMjo6MDo6&url=%2FSony-24-70mm-SEL2470GM-Cleaning-Renewed%2Fdp%2FB0B4PR8L1Y%2Fref%3Dsr_1_1_sspa%3Fdib%3DeyJ2IjoiMSJ9.0P1yWnUIA2zMWFY-fdqT0PyGHC4sJguRlKFJZker-c6fE5KgLYaEKEDeKt99l1jd7dYpGwXFVYPlpoSWuCb1_dDFcXTeYACkKAUnCDLwe1fd0yVPwYgqPd9GVNccYMpzwOJPGd4cpECUjEUIRPCEt6Gg7lekxFFckVnIyiBCIxQZk4mUYLIzvhjoQjNiwwt--7JDBam5Kuda08NlEM5-mxPiyylnrgC5Th0ijPP7USw.US804YYwDkGO2YL-0QlJG2hAZJq6YTdf3ZRVRvev9Zg%26dib_tag%3Dse%26keywords%3DSony%2BFE%2B24-70mm%2BF2.8%2BGM%2BII%26qid%3D1788225862%26sbo%3DGW1QB%252BmqAsHTPf1jTZRSDA%253D%253D%26sr%3D8-1-spons%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9hdGY%26psc%3D1"
+            },
+            "DE": {
+                "newPrice": "2299.0 €",
+                "newPriceVal": 2299.0,
+                "usedPrice": "Dès 1839 €",
+                "usedPriceVal": 1839,
+                "url": "https://www.amazon.de/Sony-Objektiv-SEL-24-70-2-8/dp/B09Z2C74JK/ref=sr_1_1?dib=eyJ2IjoiMSJ9.G5lnXtkvvU-nNQXW6bvBysdlA4NDOJCK3dNM0T6GqGJhdBAbGdmcWbEFjGohqXml_9igXnVDzc3Pcm6i-wuLh411CVuCi3hybVrUxgFV-UIukzlSmN8KNBSprNlPyu1vRCk_2XsSWSgA1e0eax2eexjO5WpjH7WzFOcIAu_IEdG5QJEELuT0Cs0V-JQhIdE04j4k3kca90C3L5img7ulg7MJYZiQna9HKoXdKeTTDJU.n0vB5FE7D8N7GBliL7J39Sgej5TFiy4jQFMzf497Xdw&dib_tag=se&keywords=Sony+FE+24-70mm+F2.8+GM+II&qid=1788225877&sr=8-1"
+            },
+            "ES": {
+                "newPrice": "2299.0 €",
+                "newPriceVal": 2299.0,
+                "usedPrice": "Dès 1839 €",
+                "usedPriceVal": 1839,
+                "url": "https://www.amazon.es/SONY-Objectif-Sel-24-70mm-2-8/dp/B09Z2C74JK/ref=sr_1_1?dib=eyJ2IjoiMSJ9.G5lnXtkvvU-nNQXW6bvByplmqeg0wsq4cn7j0phuTO5fF4QPLFkKheEbD-TkU_dEuNt1C99rTS5cqKKAUCw2KB6a9oOSwZ1LJ_RDeaiOGeQVqWZwRwwiUL9HZ12KVuPtnu3cw8gKQJaVWFgzzHdWqW9ue5r-Qf5nD40QY33hL9DwKlxRpy3p2xpgTknNTANcTcqmWPL4Q5FR_agdrUJl5YnAQ0HfZ69BZZlou6N0GMfoZgUoqrTfqdPt3P6uykPQSzFZ27UzwI_5Fkr-gne2CGsZSOrtPA3NQLV3MKwvtHY.3rvX-CF9G608LxlX35PjTJ6FKMiIL5wGVTHDroXzf6s&dib_tag=se&keywords=Sony+FE+24-70mm+F2.8+GM+II&qid=1788225884&sr=8-1"
+            },
+            "FR": {
+                "newPrice": "1499.0 €",
+                "newPriceVal": 1499.0,
+                "usedPrice": "Dès 1199 €",
+                "usedPriceVal": 1199,
+                "url": "https://www.amazon.fr/sspa/click?ie=UTF8&spc=MTozNDY5MTUyODMzODYyNDkwOjE3ODgyMjU4OTE6c3BfYXRmOjMwMDM0MTQ3ODUwOTMzMjo6MDo6&url=%2FSony-SEL2470GM-zoom-FE-24-70%2Fdp%2FB01BUAVMQY%2Fref%3Dsr_1_1_sspa%3Fdib%3DeyJ2IjoiMSJ9.n35xxwSfCHxbtPokk7-7mZDRPI1pEmPEYp9YM-R9uSR0Seouq0tqfb2qWY-XBCvMfN83b1wH_EIP4TQdYpxgnj4y_cCHGovEEEsljfAKEz5h4Kz0HiVuk7IJbbL2Nw4_3IVRorfDwUZ4qu9q734NdkbPqiqU4IQdySxR2jup0LPW5oL3zsn952EEnWm-XldpxZK8eJCE9mRIdwe7hjPXurD1PoyEJ5qjQQ327sm4fTUyq9eD_gKy5VRVJkQ-jCyLPkIGxh-rY_0f5cTe3l7i8LF4b7RxRWQpzInFqjpLGLg.vPmUOvObUhaiAPj198vH3dxQ-3w8OlGz6vb3QT_OWsg%26dib_tag%3Dse%26keywords%3DSony%2BFE%2B24-70mm%2BF2.8%2BGM%2BII%26qid%3D1788225891%26sr%3D8-1-spons%26aref%3Dy2hK6LTlFi%26sp_csd%3Dd2lkZ2V0TmFtZT1zcF9hdGY%26psc%3D1&aref=y2hK6LTlFi&sp_cr=ZAZ"
+            },
+            "IT": {
+                "newPrice": "1400.81 €",
+                "newPriceVal": 1400.81,
+                "usedPrice": "Dès 1120 €",
+                "usedPriceVal": 1120,
+                "url": "https://www.amazon.it/Sony-SEL2470GM-reportage-matrimoni-compatibile/dp/B01BUAVMQY/ref=sr_1_1?dib=eyJ2IjoiMSJ9.n35xxwSfCHxbtPokk7-7mdlkkz73qYe6zxYc1VKcJPwwLZhEH6d58kqsoeH355GWkt7S6B_cUQzx2FJQ_w9RypZBwsL6qQNY63DrQaXDIpxM7bgqzZPfXCD0TNMxU_RzRQbpPyKVwpS3umJwPh46q6gNtllaWnRVLUmD4-aqZ5eAAd52pfJkvHTGgxIqPQMLXu9BRxUbhm1xlnb6qqVs47xfweyDCWey5HVvvOif5eYpVZr6ulOKfhoD9GaC_3bveHhuHdZhBWNgiz3N9AddiYppzFJ6JqJ1hh88AfapUng.RY9FDWa5Okyx6vCfx09KmdapSLN8xikafViwVN5NPMY&dib_tag=se&keywords=Sony+FE+24-70mm+F2.8+GM+II&qid=1788225897&sr=8-1"
+            },
+            "AU": {
+                "newPrice": "2388.0 AU$",
+                "newPriceVal": 2388.0,
+                "usedPrice": "Dès 1910 AU$",
+                "usedPriceVal": 1910,
+                "url": "https://www.amazon.com.au/Sony-FE-24-70mm-F2-8-Lens/dp/B09YYY6P98/ref=sr_1_1?dib=eyJ2IjoiMSJ9.yYp7DywunuSBtFCt9Q1gTOVZyvjrrOrBuDiCG2jyyiY9lfylvamxJ6z3ZZcOZ8JhyAyoeqnDBH1r4I9X5F_eYHzjXhmdgNk9CteaPxHJPj_8ro_8i6F9fVNqztqfEiyD1Mv3i-zxHXreq_1R9aMtYE_wRuYe5VL7P_zDhEg0C2E8pTS8ZT7pbns3ufYKG2GuPn-AW1fWSW_-_3Ej229HJ7uJluaCq-X6VREmlVeXtEo53MIRl0EUEIukZdFVf-Gd-PPUceaRRzZW-kbOcq74fxOJd4o8b_h9ZENXai_lcKo.BWU2trMhwS9uq_7DzKH9Wvuuae3VRVHsIDLHd4fD6OA&dib_tag=se&keywords=Sony+FE+24-70mm+F2.8+GM+II&qid=1788225921&sr=8-1"
+            },
+            "IN": {
+                "newPrice": "127490.0 ₹",
+                "newPriceVal": 127490.0,
+                "usedPrice": "Dès 101992 ₹",
+                "usedPriceVal": 101992,
+                "url": "https://www.amazon.in/Sony-SEL2470GM-24-70-Frame-Master/dp/B01BUAVMQY/ref=sr_1_1?dib=eyJ2IjoiMSJ9.3e-JF8N9rQy484uZOZnnyD8Rw40sHa_jdmrRJNPR-ecmJNUOcLuecKUkcrSQExxn5S48N2AKtxPNxznBasa3PFKzQAgEs-fBZh52I_3Z1ftrY8v2rOGp2-u9DVwdrTGWwzex4pzN75OUn8r5EsHdJlhAgmkxedGt5EGVKzjTXuDl9V6IRZgNuB5JiWeK3_m1bWW1uIp51LDijXfYYsSxlDo_KReaLRR1vWojE7x2KdY.-Gl_YinFk4T7A6HP_ixlaSriTV6VANCSFHLHnAr3tuU&dib_tag=se&keywords=Sony+FE+24-70mm+F2.8+GM+II&qid=1788225933&sr=8-1"
+            },
+            "SE": {
+                "newPrice": "17490.0 kr",
+                "newPriceVal": 17490.0,
+                "usedPrice": "Dès 13992 kr",
+                "usedPriceVal": 13992,
+                "url": "https://www.amazon.se/Sony-SEL2470GM-SYX-24-70-Objektiv-Svart/dp/B01BUAVMQY/ref=sr_1_1?dib=eyJ2IjoiMSJ9.n35xxwSfCHxbtPokk7-7mRvFL_R9-1f22jKqR5NL6oZB7rUbXGw_ByY7zuf1030DvsayJfpsfaomJnMe22s-CWVaUo7XssFANb1yO5jTuj87NIpMN6TGnjPuLOS8wwDtRHzuEpr5-uMMBwbc47qbg2Ykc-3qk76i7Fwjg6aB8JMshvHqjm4WCNszh1TbEM77__FqIgNSiulTMsC3s1NDLKwjU-tY-mumXURrIEfkgAN82tU8w2SgvaG0wW6m3aH0lrbmLx21DOHms0buVZcWpXqlz76orURT0J_JcpHWGJA.Vq2xGXxmzIsvV5TQQouW0vEwOJADBfJ4lg9ybzBisEw&dib_tag=se&keywords=Sony+FE+24-70mm+F2.8+GM+II&qid=1788225939&sr=8-1"
+            }
+        },
+        "historyData": {
+            "6M": {
+                "labels": [
+                    "September 2026"
+                ],
+                "prices": [
+                    1499.0
+                ]
             }
         }
-
-        function renderTable(data) {
-            // Destruction des graphiques précédents pour éviter les superpositions graphiques
-            Object.values(activeCharts.forEach ? activeCharts : Object.keys(activeCharts)).forEach(id => {
-                if (activeCharts[id]) {
-                    activeCharts[id].destroy();
-                }
-            });
-            activeCharts = {};
-
-            tableBody.innerHTML = '';
-            if (data.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="10" class="p-4 text-center text-gray-500">Aucun objectif trouvé.</td></tr>`;
-                return;
-            }
-
-            data.forEach((lens, index) => {
-                const row = document.createElement('tr');
-                row.className = 'hover:bg-gray-900/50 transition';
-
-                const lensRef = lens.ref || lens.code || lens.reference || '';
-                const refDisplay = lensRef ? `<span class="block text-xs text-orange-400 font-mono mt-0.5">${lensRef}</span>` : '';
-                const scoreDisplay = lens.dxoScore ? `${lens.dxoScore} <span class="text-xs text-gray-500 font-normal">/ 100</span>` : '-';
-
-                row.innerHTML = `
-                    <td class="p-4 font-medium text-white">${lens.name || '-'}${refDisplay}</td>
-                    <td class="p-4 text-gray-300">${lens.brand || '-'}</td>
-                    <td class="p-4 text-gray-300"><span class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded font-mono">${lens.mount || 'E-mount'}</span></td>
-                    <td class="p-4 text-gray-400">${lens.type || '-'}</td>
-                    <td class="p-4 text-gray-300">${lens.aperture || '-'}</td>
-                    <td class="p-4 font-semibold text-orange-400">${scoreDisplay}</td>
-                    <td class="p-4 text-gray-200">${lens.newPrice || 'N/C'}</td>
-                    <td class="p-4 text-gray-300">${lens.usedPrice || 'N/C'}</td>
-                    <td class="p-4">
-                        <div style="width: 180px; height: 45px; position: relative;">
-                            <canvas id="chart-${index}"></canvas>
-                        </div>
-                    </td>
-                    <td class="p-4 text-right"><a href="${lens.url || '#'}" target="_blank" class="text-orange-500 hover:text-orange-400 text-xs font-semibold">Voir</a></td>
-                `;
-                tableBody.appendChild(row);
-
-                // Initialisation du graphique Chart.js avec l'infobulle configurée pour afficher Mois + Année
-                if (lens.history && lens.history[currentPeriod]) {
-                    setTimeout(() => {
-                        const canvasEl = document.getElementById(`chart-${index}`);
-                        if (canvasEl) {
-                            const ctx = canvasEl.getContext('2d');
-                            activeCharts[index] = new Chart(ctx, {
-                                type: 'line',
-                                data: {
-                                    labels: lens.history[currentPeriod].labels || [], // Ex: ["Jan 2025", "Fév 2025", ...] dans ton JSON
-                                    datasets: [{
-                                        data: lens.history[currentPeriod].prices || [],
-                                        borderColor: '#f97316',
-                                        borderWidth: 2,
-                                        pointRadius: 2,
-                                        tension: 0.3,
-                                        fill: false
-                                    }]
-                                },
-                                options: {
-                                    responsive: false,
-                                    maintainAspectRatio: false,
-                                    plugins: { 
-                                        legend: { display: false }, 
-                                        tooltip: { 
-                                            enabled: true,
-                                            callbacks: {
-                                                title: function(context) {
-                                                    // Affiche explicitement le mois et l'année stockés dans les labels du JSON
-                                                    return context[0].label;
-                                                },
-                                                label: function(context) {
-                                                    return ` Prix : ${context.raw} €`;
-                                                }
-                                            }
-                                        } 
-                                    },
-                                    scales: {
-                                        x: { display: false },
-                                        y: { display: false }
-                                    }
-                                }
-                            });
-                        }
-                    }, 0);
-                }
-            });
-        }
-
-        function filterType(type) {
-            currentType = type;
-            ['all', 'zoom', 'prime'].forEach(t => {
-                const btn = document.getElementById(`btn-type-${t}`);
-                if (btn) {
-                    btn.className = (t === type) ? "px-3 py-1.5 text-xs bg-gray-800 text-white rounded-md transition font-medium" : "px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition";
-                }
-            });
-            applyFilters();
-        }
-
-        function changeGlobalPeriod(period) {
-            currentPeriod = period;
-            applyFilters();
-        }
-
-        function sortTable(column) {
-            if (currentSortColumn === column) {
-                currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
-            } else {
-                currentSortColumn = column;
-                currentSortDirection = 'asc';
-            }
-
-            lenses.sort((a, b) => {
-                let valA = a[column];
-                let valB = b[column];
-                if (valA === undefined || valA === null) valA = '';
-                if (valB === undefined || valB === null) valB = '';
-                if (typeof valA === 'string') {
-                    return currentSortDirection === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
-                } else {
-                    return currentSortDirection === 'asc' ? valA - valB : valB - valA;
-                }
-            });
-            applyFilters();
-        }
-
-        function applyFilters() {
-            const query = searchInput.value.toLowerCase();
-            const checkedBrands = Array.from(document.querySelectorAll('.brand-checkbox:checked')).map(cb => cb.value.toLowerCase());
-
-            const filtered = lenses.filter(lens => {
-                const matchesSearch = (lens.name && lens.name.toLowerCase().includes(query)) || 
-                                      (lens.brand && lens.brand.toLowerCase().includes(query)) ||
-                                      (lens.ref && lens.ref.toLowerCase().includes(query));
-                const matchesType = currentType === 'all' || (lens.type && lens.type.toLowerCase() === currentType);
-                const matchesBrand = !lens.brand || checkedBrands.includes(lens.brand.toLowerCase());
-                return matchesSearch && matchesType && matchesBrand;
-            });
-
-            renderTable(filtered);
-        }
-
-        searchInput.addEventListener('input', applyFilters);
-        loadDatabase();
-    </script>
-</body>
-</html>
+    }
+]
