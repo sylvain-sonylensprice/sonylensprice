@@ -311,9 +311,9 @@
 
             const filtered = lenses.filter(lens => {
                 const matchesSearch = (lens.name && lens.name.toLowerCase().includes(query)) || 
-                                      (lens.brand && lens.brand.toLowerCase().includes(query)) ||
-                                      (lens.ref && lens.ref.toLowerCase().includes(query)) ||
-                                      (lens.mount && lens.mount.toLowerCase().includes(query));
+                                    (lens.brand && lens.brand.toLowerCase().includes(query)) ||
+                                    (lens.ref && lens.ref.toLowerCase().includes(query)) ||
+                                    (lens.mount && lens.mount.toLowerCase().includes(query));
                 const matchesType = currentType === 'all' || (lens.type && lens.type.toLowerCase() === currentType);
                 const matchesBrand = !lens.brand || checkedBrands.includes(lens.brand.toLowerCase());
                 return matchesSearch && matchesType && matchesBrand;
