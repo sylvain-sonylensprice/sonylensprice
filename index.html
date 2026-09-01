@@ -63,7 +63,7 @@
                             <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('dxoScore')">DXOMark</th>
                             <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('newPriceVal')">Neuf</th>
                             <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('usedPriceVal')">Occasion</th>
-                            <th class="p-3.5 w-40">Historique Prix</th>
+                            <th class="p-3.5 w-48">Historique Prix</th>
                             <th class="p-3.5 text-right">Action</th>
                         </tr>
                     </thead>
@@ -176,7 +176,7 @@
                     <td class="p-3.5 text-gray-200">${lens.newPrice || 'N/C'}</td>
                     <td class="p-3.5 text-gray-300">${lens.usedPrice || 'N/C'}</td>
                     <td class="p-3.5 py-3">
-                        <div style="width: 130px; height: 36px; position: relative;">
+                        <div style="width: 170px; height: 60px; position: relative;">
                             <canvas id="chart-${index}"></canvas>
                         </div>
                     </td>
@@ -197,7 +197,7 @@
                                         data: lens.history[currentPeriod].prices || [],
                                         borderColor: '#f97316',
                                         borderWidth: 2,
-                                        pointRadius: 3,
+                                        pointRadius: 2,
                                         tension: 0.3,
                                         fill: false
                                     }]
@@ -207,11 +207,32 @@
                                     maintainAspectRatio: false,
                                     plugins: { 
                                         legend: { display: false }, 
-                                        tooltip: { enabled: false } // Désactivation totale des infobulles bloquantes
+                                        tooltip: { enabled: false } // Pas d'infobulle flottante gênante
                                     },
                                     scales: {
-                                        x: { display: false },
-                                        y: { display: false }
+                                        x: { 
+                                            display: true, // Affichage direct des informations en abscisse
+                                            ticks: { 
+                                                color: '#9ca3af', 
+                                                font: { size: 9 },
+                                                maxRotation: 0,
+                                                autoSkip: true,
+                                                maxTicksLimit: 4
+                                            },
+                                            grid: { display: false }
+                                        },
+                                        y: { 
+                                            display: true, // Affichage direct des informations en ordonnée
+                                            ticks: { 
+                                                color: '#9ca3af', 
+                                                font: { size: 9 },
+                                                maxTicksLimit: 3,
+                                                callback: function(value) {
+                                                    return value + '€';
+                                                }
+                                            },
+                                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                                        }
                                     }
                                 }
                             });
