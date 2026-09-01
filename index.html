@@ -51,8 +51,8 @@
                 </div>
             </div>
 
-            <!-- Ajout d'un padding vertical interne (pt-6) pour laisser respirer les infobulles du haut -->
-            <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-xl mb-12 pt-6">
+            <!-- Ajout d'un padding top important (pt-10) pour que l'infobulle ne soit jamais coupée au sommet -->
+            <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-xl mb-12 pt-10">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="border-b border-gray-800 text-xs uppercase tracking-wider text-gray-400 bg-gray-900/80">
@@ -64,7 +64,7 @@
                             <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('dxoScore')">DXOMark</th>
                             <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('newPriceVal')">Neuf</th>
                             <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('usedPriceVal')">Occasion</th>
-                            <th class="p-3.5 w-40">Historique Prix</th>
+                            <th class="p-3.5 w-40">Historique Prix (Abscisse / Ordonnée)</th>
                             <th class="p-3.5 text-right">Action</th>
                         </tr>
                     </thead>
@@ -91,9 +91,9 @@
                 usedPriceVal: 1199,
                 url: "#",
                 history: {
-                    "1M": { labels: ["Juil 2026", "Août 2026"], prices: [1510, 1499] },
-                    "6M": { labels: ["Mars 2026", "Avril 2026", "Mai 2026", "Juin 2026", "Juil 2026", "Août 2026"], prices: [1650, 1600, 1550, 1520, 1510, 1499] },
-                    "1Y": { labels: ["Sep 2025", "Nov 2025", "Jan 2026", "Mar 2026", "Juin 2026", "Août 2026"], prices: [1700, 1680, 1650, 1600, 1550, 1499] },
+                    "1M": { labels: ["Juil", "Août"], prices: [1510, 1499] },
+                    "6M": { labels: ["Mars", "Avril", "Mai", "Juin", "Juil", "Août"], prices: [1650, 1600, 1550, 1520, 1510, 1499] },
+                    "1Y": { labels: ["Sep", "Nov", "Jan", "Mar", "Juin", "Août"], prices: [1700, 1680, 1650, 1600, 1550, 1499] },
                     "ALL": { labels: ["2023", "2024", "2025", "2026"], prices: [2299, 1899, 1650, 1499] }
                 }
             },
@@ -111,9 +111,9 @@
                 usedPriceVal: 820,
                 url: "#",
                 history: {
-                    "1M": { labels: ["Juil 2026", "Août 2026"], prices: [1049, 1049] },
-                    "6M": { labels: ["Mars 2026", "Avril 2026", "Mai 2026", "Juin 2026", "Juil 2026", "Août 2026"], prices: [1099, 1099, 1079, 1059, 1049, 1049] },
-                    "1Y": { labels: ["Sep 2025", "Nov 2025", "Jan 2026", "Mar 2026", "Juin 2026", "Août 2026"], prices: [1149, 1120, 1099, 1099, 1059, 1049] },
+                    "1M": { labels: ["Juil", "Août"], prices: [1049, 1049] },
+                    "6M": { labels: ["Mars", "Avril", "Mai", "Juin", "Juil", "Août"], prices: [1099, 1099, 1079, 1059, 1049, 1049] },
+                    "1Y": { labels: ["Sep", "Nov", "Jan", "Mar", "Juin", "Août"], prices: [1149, 1120, 1099, 1099, 1059, 1049] },
                     "ALL": { labels: ["2023", "2024", "2025", "2026"], prices: [1299, 1199, 1100, 1049] }
                 }
             },
@@ -131,30 +131,10 @@
                 usedPriceVal: 520,
                 url: "#",
                 history: {
-                    "1M": { labels: ["Juil 2026", "Août 2026"], prices: [719, 699] },
-                    "6M": { labels: ["Mars 2026", "Avril 2026", "Mai 2026", "Juin 2026", "Juil 2026", "Août 2026"], prices: [749, 749, 729, 719, 719, 699] },
-                    "1Y": { labels: ["Sep 2025", "Nov 2025", "Jan 2026", "Mar 2026", "Juin 2026", "Août 2026"], prices: [779, 759, 749, 749, 719, 699] },
+                    "1M": { labels: ["Juil", "Août"], prices: [719, 699] },
+                    "6M": { labels: ["Mars", "Avril", "Mai", "Juin", "Juil", "Août"], prices: [749, 749, 729, 719, 719, 699] },
+                    "1Y": { labels: ["Sep", "Nov", "Jan", "Mar", "Juin", "Août"], prices: [779, 759, 749, 749, 719, 699] },
                     "ALL": { labels: ["2023", "2024", "2025", "2026"], prices: [879, 819, 760, 699] }
-                }
-            },
-            {
-                name: "Sony 70-400mm F4-5.6 G SSM II",
-                ref: "SAL70400G2",
-                brand: "Sony",
-                mount: "A / Full Frame",
-                type: "zoom",
-                aperture: "f/4-5.6",
-                dxoScore: 42,
-                newPrice: "N/C",
-                usedPrice: "Dès 890 €",
-                newPriceVal: 0,
-                usedPriceVal: 890,
-                url: "#",
-                history: {
-                    "1M": { labels: ["Juil 2026", "Août 2026"], prices: [900, 890] },
-                    "6M": { labels: ["Mars 2026", "Avril 2026", "Mai 2026", "Juin 2026", "Juil 2026", "Août 2026"], prices: [950, 930, 920, 900, 900, 890] },
-                    "1Y": { labels: ["Sep 2025", "Nov 2025", "Jan 2026", "Mar 2026", "Juin 2026", "Août 2026"], prices: [990, 970, 950, 930, 900, 890] },
-                    "ALL": { labels: ["2023", "2024", "2025", "2026"], prices: [1100, 1050, 990, 890] }
                 }
             }
         ];
@@ -196,8 +176,8 @@
                     <td class="p-3.5 font-semibold text-orange-400">${scoreDisplay}</td>
                     <td class="p-3.5 text-gray-200">${lens.newPrice || 'N/C'}</td>
                     <td class="p-3.5 text-gray-300">${lens.usedPrice || 'N/C'}</td>
-                    <td class="p-3.5">
-                        <div style="width: 120px; height: 35px; position: relative;">
+                    <td class="p-3.5 py-2">
+                        <div style="width: 130px; height: 42px; position: relative;">
                             <canvas id="chart-${index}"></canvas>
                         </div>
                     </td>
@@ -230,14 +210,14 @@
                                         legend: { display: false }, 
                                         tooltip: { 
                                             enabled: true,
-                                            // Force l'infobulle à s'afficher en bas du point pour éviter qu'elle ne soit coupée par le haut du conteneur
                                             yAlign: 'bottom',
+                                            caretPadding: 6,
                                             callbacks: {
                                                 title: function(context) {
-                                                    return context[0].label;
+                                                    return `Date (Abscisse) : ${context[0].label}`;
                                                 },
                                                 label: function(context) {
-                                                    return ` Prix : ${context.raw} €`;
+                                                    return `Prix (Ordonnée) : ${context.raw} €`;
                                                 }
                                             }
                                         } 
