@@ -11,9 +11,16 @@
 
     <div>
         <header class="border-b border-gray-800 bg-gray-900/50 backdrop-blur sticky top-0 z-20">
-            <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-                <h1 class="text-xl font-bold tracking-tight text-orange-500">SonyLens<span class="text-white">Price</span></h1>
-                <span class="text-sm text-gray-400">Optiques Sony & Tiers | Évaluations DXOMark</span>
+            <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-3">
+                <div class="flex items-baseline gap-3">
+                    <h1 class="text-xl font-bold tracking-tight text-orange-500">SonyLens<span class="text-white">Price</span></h1>
+                    <span class="text-xs text-gray-400">Optiques Sony & Tiers | Évaluations DXOMark</span>
+                </div>
+                <!-- Sources officielles ciblées pour le Web Scraping Amazon -->
+                <div class="flex items-center gap-2 bg-gray-900/80 border border-gray-800 px-3 py-1.5 rounded-lg text-xs text-gray-400 max-w-full overflow-x-auto">
+                    <span class="font-semibold text-orange-400 whitespace-nowrap">Sources Scraping (Amazon) :</span>
+                    <span class="text-gray-300 whitespace-nowrap">amazon.com / .co.uk / .de / .es / .fr / .it / .ca / .com.au / .in / .se / .ie</span>
+                </div>
             </div>
         </header>
 
@@ -51,7 +58,6 @@
                 </div>
             </div>
 
-            <!-- Marge haute (pt-12) pour éviter toute collision de l'infobulle avec l'en-tête du tableau -->
             <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-xl mb-12 pt-12">
                 <table class="w-full text-left border-collapse">
                     <thead>
@@ -220,10 +226,10 @@
                                             displayColors: false,
                                             callbacks: {
                                                 title: function(context) {
-                                                    return context[0].label; // Affiche Mois Année dans l'infobulle
+                                                    return context[0].label;
                                                 },
                                                 label: function(context) {
-                                                    return `Prix : ${context.raw} €`; // Affiche Prix dans l'infobulle
+                                                    return `Prix : ${context.raw} €`;
                                                 }
                                             }
                                         } 
