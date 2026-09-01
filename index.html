@@ -51,7 +51,8 @@
                 </div>
             </div>
 
-            <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-xl mb-12">
+            <!-- Ajout d'un padding vertical interne (pt-6) pour laisser respirer les infobulles du haut -->
+            <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-xl mb-12 pt-6">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="border-b border-gray-800 text-xs uppercase tracking-wider text-gray-400 bg-gray-900/80">
@@ -80,7 +81,7 @@
                 name: "Sony FE 24-70mm F2.8 GM II",
                 ref: "SEL2470GM2",
                 brand: "Sony",
-                mount: "FE (Full Frame)",
+                mount: "FE / Full Frame",
                 type: "zoom",
                 aperture: "f/2.8",
                 dxoScore: 45,
@@ -100,7 +101,7 @@
                 name: "Sigma 85mm F1.4 DG DN Art",
                 ref: "322965",
                 brand: "Sigma",
-                mount: "FE (Full Frame)",
+                mount: "FE / Full Frame",
                 type: "prime",
                 aperture: "f/1.4",
                 dxoScore: 51,
@@ -120,7 +121,7 @@
                 name: "Tamron 17-70mm F/2.8 Di III-A VC RXD",
                 ref: "B070",
                 brand: "Tamron",
-                mount: "E (APS-C)",
+                mount: "E / APS-C",
                 type: "zoom",
                 aperture: "f/2.8",
                 dxoScore: 39,
@@ -134,6 +135,26 @@
                     "6M": { labels: ["Mars 2026", "Avril 2026", "Mai 2026", "Juin 2026", "Juil 2026", "Août 2026"], prices: [749, 749, 729, 719, 719, 699] },
                     "1Y": { labels: ["Sep 2025", "Nov 2025", "Jan 2026", "Mar 2026", "Juin 2026", "Août 2026"], prices: [779, 759, 749, 749, 719, 699] },
                     "ALL": { labels: ["2023", "2024", "2025", "2026"], prices: [879, 819, 760, 699] }
+                }
+            },
+            {
+                name: "Sony 70-400mm F4-5.6 G SSM II",
+                ref: "SAL70400G2",
+                brand: "Sony",
+                mount: "A / Full Frame",
+                type: "zoom",
+                aperture: "f/4-5.6",
+                dxoScore: 42,
+                newPrice: "N/C",
+                usedPrice: "Dès 890 €",
+                newPriceVal: 0,
+                usedPriceVal: 890,
+                url: "#",
+                history: {
+                    "1M": { labels: ["Juil 2026", "Août 2026"], prices: [900, 890] },
+                    "6M": { labels: ["Mars 2026", "Avril 2026", "Mai 2026", "Juin 2026", "Juil 2026", "Août 2026"], prices: [950, 930, 920, 900, 900, 890] },
+                    "1Y": { labels: ["Sep 2025", "Nov 2025", "Jan 2026", "Mar 2026", "Juin 2026", "Août 2026"], prices: [990, 970, 950, 930, 900, 890] },
+                    "ALL": { labels: ["2023", "2024", "2025", "2026"], prices: [1100, 1050, 990, 890] }
                 }
             }
         ];
@@ -169,7 +190,7 @@
                 row.innerHTML = `
                     <td class="p-3.5 font-medium text-white">${lens.name || '-'}${refDisplay}</td>
                     <td class="p-3.5 text-gray-300">${lens.brand || '-'}</td>
-                    <td class="p-3.5 text-gray-300"><span class="bg-gray-800 text-orange-400 font-bold text-xs px-2 py-1 rounded font-mono">${lens.mount || 'FE'}</span></td>
+                    <td class="p-3.5 text-gray-300"><span class="bg-gray-800 text-orange-400 font-bold text-xs px-2 py-1 rounded font-mono">${lens.mount || 'FE / Full Frame'}</span></td>
                     <td class="p-3.5 text-gray-400">${lens.type || '-'}</td>
                     <td class="p-3.5 text-gray-300">${lens.aperture || '-'}</td>
                     <td class="p-3.5 font-semibold text-orange-400">${scoreDisplay}</td>
@@ -209,6 +230,8 @@
                                         legend: { display: false }, 
                                         tooltip: { 
                                             enabled: true,
+                                            // Force l'infobulle à s'afficher en bas du point pour éviter qu'elle ne soit coupée par le haut du conteneur
+                                            yAlign: 'bottom',
                                             callbacks: {
                                                 title: function(context) {
                                                     return context[0].label;
