@@ -18,7 +18,7 @@
                 </div>
                 <!-- Sources officielles ciblées pour le Web Scraping Amazon -->
                 <div class="flex items-center gap-2 bg-gray-900/80 border border-gray-800 px-3 py-1.5 rounded-lg text-xs text-gray-400 max-w-full overflow-x-auto">
-                    <span class="font-semibold text-orange-400 whitespace-nowrap">Prix Amazon :</span>
+                    <span class="font-semibold text-orange-400 whitespace-nowrap">Sources Scraping (Amazon) :</span>
                     <span class="text-gray-300 whitespace-nowrap">amazon.com / .co.uk / .de / .es / .fr / .it / .ca / .com.au / .in / .se / .ie</span>
                 </div>
             </div>
@@ -82,7 +82,7 @@
     </div>
 
     <script>
-        // Variable globale qui recevra les données du fichier JSON du scraper
+          // Variable globale qui recevra les données du fichier JSON du scraper
         let lenses = [];
 
         let activeCharts = {};
@@ -107,6 +107,14 @@
                 tableBody.innerHTML = `<tr><td colspan="10" class="p-4 text-center text-red-500">Erreur de chargement des données de prix.</td></tr>`;
             }
         }
+
+        let activeCharts = {};
+        const tableBody = document.getElementById('lensTableBody');
+        const searchInput = document.getElementById('searchInput');
+        let currentType = 'all';
+        let currentSortColumn = '';
+        let currentSortDirection = 'asc';
+        let currentPeriod = '6M';
 
         function renderTable(data) {
             Object.keys(activeCharts).forEach(id => {
@@ -146,10 +154,7 @@
                 `;
                 tableBody.appendChild(row);
 
-                // Gestion flexible de l'historique (compatibilité 'history' ou 'historyData')
-                const historyObj = lens.history || lens.historyData;
-
-                if (historyObj && historyObj[currentPeriod]) {
+                if (lens.history && lens.history[currentPeriod]) {
                     setTimeout(() => {
                         const canvasEl = document.getElementById(`chart-${index}`);
                         if (canvasEl) {
@@ -157,9 +162,9 @@
                             activeCharts[index] = new Chart(ctx, {
                                 type: 'line',
                                 data: {
-                                    labels: historyObj[currentPeriod].labels || [],
+                                    labels: lens.history[currentPeriod].labels || [],
                                     datasets: [{
-                                        data: historyObj[currentPeriod].prices || [],
+                                        data: lens.history[currentPeriod].prices || [],
                                         borderColor: '#f97316',
                                         borderWidth: 2,
                                         pointRadius: 2,
@@ -269,9 +274,9 @@
 
             const filtered = lenses.filter(lens => {
                 const matchesSearch = (lens.name && lens.name.toLowerCase().includes(query)) || 
-                                    (lens.brand && lens.brand.toLowerCase().includes(query)) ||
-                                    (lens.ref && lens.ref.toLowerCase().includes(query)) ||
-                                    (lens.mount && lens.mount.toLowerCase().includes(query));
+                                      (lens.brand && lens.brand.toLowerCase().includes(query)) ||
+                                      (lens.ref && lens.ref.toLowerCase().includes(query)) ||
+                                      (lens.mount && lens.mount.toLowerCase().includes(query));
                 const matchesType = currentType === 'all' || (lens.type && lens.type.toLowerCase() === currentType);
                 const matchesBrand = !lens.brand || checkedBrands.includes(lens.brand.toLowerCase());
                 return matchesSearch && matchesType && matchesBrand;
@@ -281,9 +286,7 @@
         }
 
         searchInput.addEventListener('input', applyFilters);
-
-        // Lancement du chargement de la base au démarrage
-        loadLensesData();
+        applyFilters();
     </script>
 </body>
 </html>
