@@ -1,57 +1,252 @@
-[
-    {
-        "name": "Sony FE 24-70mm F2.8 GM II",
-        "brand": "Sony",
-        "ref": "SEL2470GM2",
-        "type": "zoom",
-        "aperture": "f/2.8",
-        "dxoScore": 45,
-        "dxoQual": "Testé",
-        "dxoLink": "https://www.dxomark.com",
-        "newPrice": "1499 €",
-        "newPriceVal": 1499,
-        "usedPrice": "Dès 1199 €",
-        "usedPriceVal": 1199,
-        "usedState": "Bon état",
-        "historyData": {
-            "1M": {
-                "labels": [
-                    "S1",
-                    "S2",
-                    "S3",
-                    "S4"
-                ],
-                "prices": [
-                    1499,
-                    1499,
-                    1499,
-                    1499
-                ]
-            },
-            "6M": {
-                "labels": [
-                    "August 2026"
-                ],
-                "prices": [
-                    1499
-                ]
-            },
-            "1Y": {
-                "labels": [
-                    "August 2026"
-                ],
-                "prices": [
-                    1499
-                ]
-            },
-            "ALL": {
-                "labels": [
-                    "August 2026"
-                ],
-                "prices": [
-                    1499
-                ]
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SonyLensPrice - Comparateur d'objectifs photo Sony & Tiers (DXOMark)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen font-sans flex flex-col justify-between">
+
+    <div>
+        <header class="border-b border-gray-800 bg-gray-900/50 backdrop-blur sticky top-0 z-20">
+            <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+                <h1 class="text-xl font-bold tracking-tight text-orange-500">SonyLens<span class="text-white">Price</span></h1>
+                <span class="text-sm text-gray-400">Optiques Sony & Tiers | Évaluations DXOMark</span>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 py-8">
+            
+            <div class="mb-8 flex flex-col lg:flex-row gap-4 justify-between items-center">
+                <div class="w-full lg:w-72">
+                    <input type="text" id="searchInput" placeholder="Rechercher (ex: Sigma, SEL2470)..." 
+                        class="w-full bg-gray-900 border border-gray-800 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-orange-500 transition">
+                </div>
+                
+                <div class="flex flex-wrap gap-4 w-full lg:w-auto justify-between lg:justify-end items-center">
+                    <div class="flex items-center gap-2 bg-gray-900 px-3 py-1.5 border border-gray-800 rounded-lg text-xs">
+                        <span class="text-gray-400 font-medium">Période d'historique de prix :</span>
+                        <select id="globalPeriodSelect" onchange="changeGlobalPeriod(this.value)" class="bg-gray-950 text-orange-400 font-semibold border border-gray-800 rounded px-2 py-1 focus:outline-none focus:border-orange-500">
+                            <option value="1M">1 mois</option>
+                            <option value="6M" selected>6 mois</option>
+                            <option value="1Y">1 an</option>
+                            <option value="ALL">Depuis l'origine</option>
+                        </select>
+                    </div>
+
+                    <div class="flex gap-1.5 bg-gray-900 p-1 border border-gray-800 rounded-lg">
+                        <button onclick="filterType('all')" id="btn-type-all" class="px-3 py-1.5 text-xs bg-gray-800 text-white rounded-md transition font-medium">Tous types</button>
+                        <button onclick="filterType('zoom')" id="btn-type-zoom" class="px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition">Zooms</button>
+                        <button onclick="filterType('prime')" id="btn-type-prime" class="px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition">Fixes</button>
+                    </div>
+
+                    <div class="flex items-center gap-3 bg-gray-900 px-3 py-1.5 border border-gray-800 rounded-lg text-xs flex-wrap">
+                        <span class="text-gray-400 font-medium">Marques :</span>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200"><input type="checkbox" value="Sony" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Sony</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200"><input type="checkbox" value="Sigma" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Sigma</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200"><input type="checkbox" value="Tamron" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Tamron</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200"><input type="checkbox" value="Samyang" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Samyang</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200"><input type="checkbox" value="Viltrox" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Viltrox</label>
+                        <label class="flex items-center gap-1.5 cursor-pointer text-gray-200"><input type="checkbox" value="Laowa" checked onchange="applyFilters()" class="brand-checkbox rounded bg-gray-800 border-gray-700 text-orange-500 focus:ring-0"> Laowa</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-xl mb-12">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse min-w-[1300px]">
+                        <thead>
+                            <tr class="border-b border-gray-800 text-xs uppercase tracking-wider text-gray-400 bg-gray-900/80">
+                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('name')">Objectif (Réf.)</th>
+                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('brand')">Marque</th>
+                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('mount')">Monture</th>
+                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('type')">Type</th>
+                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('aperture')">Ouverture</th>
+                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('dxoScore')">DXOMark Score</th>
+                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('newPriceVal')">Neuf</th>
+                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('usedPriceVal')">Occasion</th>
+                                <th class="p-4 w-72">Historique Prix</th>
+                                <th class="p-4 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lensTableBody" class="divide-y divide-gray-800 text-sm">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let lenses = [];
+        let activeCharts = {}; // Pour détruire proprement les instances Chart.js existantes et éviter les fuites mémoire / bugs
+        const tableBody = document.getElementById('lensTableBody');
+        const searchInput = document.getElementById('searchInput');
+        let currentType = 'all';
+        let currentSortColumn = '';
+        let currentSortDirection = 'asc';
+        let currentPeriod = '6M';
+
+        async function loadDatabase() {
+            try {
+                const response = await fetch('lenses_db.json');
+                if (!response.ok) throw new Error("Erreur de chargement du fichier JSON");
+                lenses = await response.json();
+                applyFilters();
+            } catch (error) {
+                console.error("Erreur:", error);
+                tableBody.innerHTML = `<tr><td colspan="10" class="p-4 text-center text-red-400">Impossible de charger 'lenses_db.json'. Vérifiez que le fichier est bien présent sur votre serveur local.</td></tr>`;
             }
         }
-    }
-]
+
+        function renderTable(data) {
+            // Destruction des graphiques précédents pour éviter les superpositions graphiques
+            Object.values(activeCharts.forEach ? activeCharts : Object.keys(activeCharts)).forEach(id => {
+                if (activeCharts[id]) {
+                    activeCharts[id].destroy();
+                }
+            });
+            activeCharts = {};
+
+            tableBody.innerHTML = '';
+            if (data.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="10" class="p-4 text-center text-gray-500">Aucun objectif trouvé.</td></tr>`;
+                return;
+            }
+
+            data.forEach((lens, index) => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-900/50 transition';
+
+                const lensRef = lens.ref || lens.code || lens.reference || '';
+                const refDisplay = lensRef ? `<span class="block text-xs text-orange-400 font-mono mt-0.5">${lensRef}</span>` : '';
+                const scoreDisplay = lens.dxoScore ? `${lens.dxoScore} <span class="text-xs text-gray-500 font-normal">/ 100</span>` : '-';
+
+                row.innerHTML = `
+                    <td class="p-4 font-medium text-white">${lens.name || '-'}${refDisplay}</td>
+                    <td class="p-4 text-gray-300">${lens.brand || '-'}</td>
+                    <td class="p-4 text-gray-300"><span class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded font-mono">${lens.mount || 'E-mount'}</span></td>
+                    <td class="p-4 text-gray-400">${lens.type || '-'}</td>
+                    <td class="p-4 text-gray-300">${lens.aperture || '-'}</td>
+                    <td class="p-4 font-semibold text-orange-400">${scoreDisplay}</td>
+                    <td class="p-4 text-gray-200">${lens.newPrice || 'N/C'}</td>
+                    <td class="p-4 text-gray-300">${lens.usedPrice || 'N/C'}</td>
+                    <td class="p-4">
+                        <div style="width: 180px; height: 45px; position: relative;">
+                            <canvas id="chart-${index}"></canvas>
+                        </div>
+                    </td>
+                    <td class="p-4 text-right"><a href="${lens.url || '#'}" target="_blank" class="text-orange-500 hover:text-orange-400 text-xs font-semibold">Voir</a></td>
+                `;
+                tableBody.appendChild(row);
+
+                // Initialisation du graphique Chart.js avec l'infobulle configurée pour afficher Mois + Année
+                if (lens.history && lens.history[currentPeriod]) {
+                    setTimeout(() => {
+                        const canvasEl = document.getElementById(`chart-${index}`);
+                        if (canvasEl) {
+                            const ctx = canvasEl.getContext('2d');
+                            activeCharts[index] = new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: lens.history[currentPeriod].labels || [], // Ex: ["Jan 2025", "Fév 2025", ...] dans ton JSON
+                                    datasets: [{
+                                        data: lens.history[currentPeriod].prices || [],
+                                        borderColor: '#f97316',
+                                        borderWidth: 2,
+                                        pointRadius: 2,
+                                        tension: 0.3,
+                                        fill: false
+                                    }]
+                                },
+                                options: {
+                                    responsive: false,
+                                    maintainAspectRatio: false,
+                                    plugins: { 
+                                        legend: { display: false }, 
+                                        tooltip: { 
+                                            enabled: true,
+                                            callbacks: {
+                                                title: function(context) {
+                                                    // Affiche explicitement le mois et l'année stockés dans les labels du JSON
+                                                    return context[0].label;
+                                                },
+                                                label: function(context) {
+                                                    return ` Prix : ${context.raw} €`;
+                                                }
+                                            }
+                                        } 
+                                    },
+                                    scales: {
+                                        x: { display: false },
+                                        y: { display: false }
+                                    }
+                                }
+                            });
+                        }
+                    }, 0);
+                }
+            });
+        }
+
+        function filterType(type) {
+            currentType = type;
+            ['all', 'zoom', 'prime'].forEach(t => {
+                const btn = document.getElementById(`btn-type-${t}`);
+                if (btn) {
+                    btn.className = (t === type) ? "px-3 py-1.5 text-xs bg-gray-800 text-white rounded-md transition font-medium" : "px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition";
+                }
+            });
+            applyFilters();
+        }
+
+        function changeGlobalPeriod(period) {
+            currentPeriod = period;
+            applyFilters();
+        }
+
+        function sortTable(column) {
+            if (currentSortColumn === column) {
+                currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSortColumn = column;
+                currentSortDirection = 'asc';
+            }
+
+            lenses.sort((a, b) => {
+                let valA = a[column];
+                let valB = b[column];
+                if (valA === undefined || valA === null) valA = '';
+                if (valB === undefined || valB === null) valB = '';
+                if (typeof valA === 'string') {
+                    return currentSortDirection === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                } else {
+                    return currentSortDirection === 'asc' ? valA - valB : valB - valA;
+                }
+            });
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const query = searchInput.value.toLowerCase();
+            const checkedBrands = Array.from(document.querySelectorAll('.brand-checkbox:checked')).map(cb => cb.value.toLowerCase());
+
+            const filtered = lenses.filter(lens => {
+                const matchesSearch = (lens.name && lens.name.toLowerCase().includes(query)) || 
+                                      (lens.brand && lens.brand.toLowerCase().includes(query)) ||
+                                      (lens.ref && lens.ref.toLowerCase().includes(query));
+                const matchesType = currentType === 'all' || (lens.type && lens.type.toLowerCase() === currentType);
+                const matchesBrand = !lens.brand || checkedBrands.includes(lens.brand.toLowerCase());
+                return matchesSearch && matchesType && matchesBrand;
+            });
+
+            renderTable(filtered);
+        }
+
+        searchInput.addEventListener('input', applyFilters);
+        loadDatabase();
+    </script>
+</body>
+</html>
