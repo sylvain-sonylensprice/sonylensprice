@@ -82,68 +82,28 @@
     </div>
 
     <script>
-        const lenses = [
-            {
-                name: "Sony FE 24-70mm F2.8 GM II",
-                ref: "SEL2470GM2",
-                brand: "Sony",
-                mount: "FE / Full Frame",
-                type: "zoom",
-                aperture: "f/2.8",
-                dxoScore: 45,
-                newPrice: "1499 €",
-                usedPrice: "Dès 1199 €",
-                newPriceVal: 1499,
-                usedPriceVal: 1199,
-                url: "#",
-                history: {
-                    "1M": { labels: ["Juil 2026", "Août 2026"], prices: [1510, 1499] },
-                    "6M": { labels: ["Mars 2026", "Avril 2026", "Mai 2026", "Juin 2026", "Juil 2026", "Août 2026"], prices: [1650, 1600, 1550, 1520, 1510, 1499] },
-                    "1Y": { labels: ["Sep 2025", "Nov 2025", "Jan 2026", "Mar 2026", "Juin 2026", "Août 2026"], prices: [1700, 1680, 1650, 1600, 1550, 1499] },
-                    "ALL": { labels: ["2023", "2024", "2025", "2026"], prices: [2299, 1899, 1650, 1499] }
-                }
-            },
-            {
-                name: "Sigma 85mm F1.4 DG DN Art",
-                ref: "322965",
-                brand: "Sigma",
-                mount: "FE / Full Frame",
-                type: "prime",
-                aperture: "f/1.4",
-                dxoScore: 51,
-                newPrice: "1049 €",
-                usedPrice: "Dès 820 €",
-                newPriceVal: 1049,
-                usedPriceVal: 820,
-                url: "#",
-                history: {
-                    "1M": { labels: ["Juil 2026", "Août 2026"], prices: [1049, 1049] },
-                    "6M": { labels: ["Mars 2026", "Avril 2026", "Mai 2026", "Juin 2026", "Juil 2026", "Août 2026"], prices: [1099, 1099, 1079, 1059, 1049, 1049] },
-                    "1Y": { labels: ["Sep 2025", "Nov 2025", "Jan 2026", "Mar 2026", "Juin 2026", "Août 2026"], prices: [1149, 1120, 1099, 1099, 1059, 1049] },
-                    "ALL": { labels: ["2023", "2024", "2025", "2026"], prices: [1299, 1199, 1100, 1049] }
-                }
-            },
-            {
-                name: "Tamron 17-70mm F/2.8 Di III-A VC RXD",
-                ref: "B070",
-                brand: "Tamron",
-                mount: "E / APS-C",
-                type: "zoom",
-                aperture: "f/2.8",
-                dxoScore: 39,
-                newPrice: "699 €",
-                usedPrice: "Dès 520 €",
-                newPriceVal: 699,
-                usedPriceVal: 520,
-                url: "#",
-                history: {
-                    "1M": { labels: ["Juil 2026", "Août 2026"], prices: [719, 699] },
-                    "6M": { labels: ["Mars 2026", "Avril 2026", "Mai 2026", "Juin 2026", "Juil 2026", "Août 2026"], prices: [749, 749, 729, 719, 719, 699] },
-                    "1Y": { labels: ["Sep 2025", "Nov 2025", "Jan 2026", "Mar 2026", "Juin 2026", "Août 2026"], prices: [779, 759, 749, 749, 719, 699] },
-                    "ALL": { labels: ["2023", "2024", "2025", "2026"], prices: [879, 819, 760, 699] }
-                }
-            }
-        ];
+      // Au lieu d'avoir un tableau statique "const lenses = [...]", on déclare une variable vide :
+let lenses = [];
+
+// Fonction pour charger dynamiquement le fichier lenses_db.json généré par le scraper Python
+async function loadLensesData() {
+    try {
+        const response = await fetch('lenses_db.json');
+        if (!response.ok) {
+            throw new Error(`Erreur HTTP: ${response.status}`);
+        }
+        lenses = await response.json();
+        
+        // Une fois les données chargées, on applique les filtres et on dessine le tableau
+        applyFilters();
+    } catch (error) {
+        console.error("Impossible de charger la base de données des objectifs :", error);
+        tableBody.innerHTML = `<tr><td colspan="10" class="p-4 text-center text-red-500">Erreur de chargement des données de prix.</td></tr>`;
+    }
+}
+
+// Lancer le chargement au démarrage de la page
+loadLensesData();
 
         let activeCharts = {};
         const tableBody = document.getElementById('lensTableBody');
