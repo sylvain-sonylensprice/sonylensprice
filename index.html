@@ -51,8 +51,7 @@
                 </div>
             </div>
 
-            <!-- Ajout d'un padding top important (pt-10) pour que l'infobulle ne soit jamais coupée au sommet -->
-            <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-xl mb-12 pt-10">
+            <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-xl mb-12">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="border-b border-gray-800 text-xs uppercase tracking-wider text-gray-400 bg-gray-900/80">
@@ -64,7 +63,7 @@
                             <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('dxoScore')">DXOMark</th>
                             <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('newPriceVal')">Neuf</th>
                             <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('usedPriceVal')">Occasion</th>
-                            <th class="p-3.5 w-40">Historique Prix (Abscisse / Ordonnée)</th>
+                            <th class="p-3.5 w-40">Historique Prix</th>
                             <th class="p-3.5 text-right">Action</th>
                         </tr>
                     </thead>
@@ -176,8 +175,8 @@
                     <td class="p-3.5 font-semibold text-orange-400">${scoreDisplay}</td>
                     <td class="p-3.5 text-gray-200">${lens.newPrice || 'N/C'}</td>
                     <td class="p-3.5 text-gray-300">${lens.usedPrice || 'N/C'}</td>
-                    <td class="p-3.5 py-2">
-                        <div style="width: 130px; height: 42px; position: relative;">
+                    <td class="p-3.5 py-3">
+                        <div style="width: 130px; height: 36px; position: relative;">
                             <canvas id="chart-${index}"></canvas>
                         </div>
                     </td>
@@ -198,7 +197,7 @@
                                         data: lens.history[currentPeriod].prices || [],
                                         borderColor: '#f97316',
                                         borderWidth: 2,
-                                        pointRadius: 2,
+                                        pointRadius: 3,
                                         tension: 0.3,
                                         fill: false
                                     }]
@@ -208,19 +207,7 @@
                                     maintainAspectRatio: false,
                                     plugins: { 
                                         legend: { display: false }, 
-                                        tooltip: { 
-                                            enabled: true,
-                                            yAlign: 'bottom',
-                                            caretPadding: 6,
-                                            callbacks: {
-                                                title: function(context) {
-                                                    return `Date (Abscisse) : ${context[0].label}`;
-                                                },
-                                                label: function(context) {
-                                                    return `Prix (Ordonnée) : ${context.raw} €`;
-                                                }
-                                            }
-                                        } 
+                                        tooltip: { enabled: false } // Désactivation totale des infobulles bloquantes
                                     },
                                     scales: {
                                         x: { display: false },
