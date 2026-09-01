@@ -152,7 +152,7 @@
                 return;
             }
 
-            data.forEach(lens => {
+            data.forEach((lens, index) => {
                 const row = document.createElement('tr');
                 row.className = 'hover:bg-gray-900/50 transition';
                 row.innerHTML = `
@@ -163,15 +163,89 @@
                     <td class="p-4 font-semibold text-orange-400">${lens.dxoScore || '-'}</td>
                     <td class="p-4 text-gray-200">${lens.newPrice || 'N/C'}</td>
                     <td class="p-4 text-gray-300">${lens.usedPrice || 'N/C'}</td>
-                    <td class="p-4 text-gray-500">Graphique</td>
+                    <td class="p-4">
+                        <div class="w-48 h-12">
+                            <canvas id="chart-${index}"></canvas>
+                        </div>
+                    </td>
                     <td class="p-4 text-right"><a href="${lens.url || '#'}" target="_blank" class="text-orange-500 hover:text-orange-400 text-xs font-semibold">Voir</a></td>
                 `;
                 tableBody.appendChild(row);
+
+                // Initialisation optionnelle du graphique si les données d'historique existent
+                if (lens.history && lens.history[currentPeriod]) {
+                    const ctx = document.getElementById(`chart-${index}`).getContext('2d');
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: lens.history[currentPeriod].labels || [],
+                            datasets: [{
+                                data: lens.history[currentPeriod].prices || [],
+                                borderColor: '#f97316',
+                                borderWidth: 1.5,
+                                pointRadius: 0,
+                                tension: 0.2
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                x: { display: false },
+                                y: { display: false }
+                            }
+                        }
+                    });
+                }
             });
         }
 
         function filterType(type) {
             currentType = type;
+            
+            // Mise à jour visuelle des boutons de type
+            ['all', 'zoom', 'prime'].forEach(t => {
+                const btn = document.getElementById(`btn-type-${t}`);
+                if (btn) {
+                    if (t === type) {
+                        btn.className = "px-3 py-1.5 text-xs bg-gray-800 text-white rounded-md transition font-medium";
+                    } else {
+                        btn.className = "px-3 py-1.5 text-xs text-gray-300 hover:text-white rounded-md transition";
+                    }
+                }
+            });
+
+            applyFilters();
+        }
+
+        function changeGlobalPeriod(period) {
+            currentPeriod = period;
+            applyFilters();
+        }
+
+        function sortTable(column) {
+            if (currentSortColumn === column) {
+                currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSortColumn = column;
+                currentSortDirection = 'asc';
+            }
+
+            lenses.sort((a, b) => {
+                let valA = a[column];
+                let valB = b[column];
+
+                if (valA === undefined || valA === null) valA = '';
+                if (valB === undefined || valB === null) valB = '';
+
+                if (typeof valA === 'string') {
+                    return currentSortDirection === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                } else {
+                    return currentSortDirection === 'asc' ? valA - valB : valB - valA;
+                }
+            });
+
             applyFilters();
         }
 
@@ -187,6 +261,16 @@
             });
 
             renderTable(filtered);
+        }
+
+        function handleSubscribe(event) {
+            event.preventDefault();
+            const msg = document.getElementById('subscribeMessage');
+            if (msg) {
+                msg.classList.remove('hidden');
+                setTimeout(() => msg.classList.add('hidden'), 4000);
+            }
+            document.getElementById('subscriberEmail').value = '';
         }
 
         searchInput.addEventListener('input', applyFilters);
