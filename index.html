@@ -165,6 +165,7 @@
                 const refDisplay = lensRef ? `<span class="block text-xs text-orange-400 font-mono mt-0.5">${lensRef}</span>` : '';
                 const scoreDisplay = lens.dxoScore ? `${lens.dxoScore} <span class="text-xs text-gray-500 font-normal">/ 100</span>` : '-';
 
+                // Conteneur fixe en position relative pour garantir le rendu du graphique Chart.js
                 row.innerHTML = `
                     <td class="p-4 font-medium text-white">
                         ${lens.name || '-'}
@@ -178,7 +179,7 @@
                     <td class="p-4 text-gray-200">${lens.newPrice || 'N/C'}</td>
                     <td class="p-4 text-gray-300">${lens.usedPrice || 'N/C'}</td>
                     <td class="p-4">
-                        <div class="w-48 h-12">
+                        <div class="relative w-48 h-12">
                             <canvas id="chart-${index}"></canvas>
                         </div>
                     </td>
