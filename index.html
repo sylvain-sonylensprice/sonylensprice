@@ -51,11 +51,11 @@
                 </div>
             </div>
 
-            <!-- Padding top augmenté à pt-12 pour laisser respirer l'infobulle au-dessus de la ligne du tableau -->
+            <!-- Marge haute (pt-12) pour éviter toute collision de l'infobulle avec l'en-tête du tableau -->
             <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-xl mb-12 pt-12">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="border-b border-gray-800 text-xs uppercase tracking-wider text-gray-400 bg-gray-900/80">
+                        <tr class="border-b border-gray-800 text-xs uppercase tracking-wider text-gray-400 bg-gray-900/85">
                             <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('name')">Objectif (Réf.)</th>
                             <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('brand')">Marque</th>
                             <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('mount')">Monture / Format</th>
@@ -64,7 +64,7 @@
                             <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('dxoScore')">DXOMark</th>
                             <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('newPriceVal')">Neuf</th>
                             <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('usedPriceVal')">Occasion</th>
-                            <th class="p-3.5 w-48">Historique Prix</th>
+                            <th class="p-3.5 w-60">Historique Prix</th>
                             <th class="p-3.5 text-right">Action</th>
                         </tr>
                     </thead>
@@ -177,7 +177,7 @@
                     <td class="p-3.5 text-gray-200">${lens.newPrice || 'N/C'}</td>
                     <td class="p-3.5 text-gray-300">${lens.usedPrice || 'N/C'}</td>
                     <td class="p-3.5 py-3">
-                        <div style="width: 170px; height: 50px; position: relative;">
+                        <div style="width: 210px; height: 75px; position: relative;">
                             <canvas id="chart-${index}"></canvas>
                         </div>
                     </td>
@@ -211,19 +211,47 @@
                                         tooltip: { 
                                             enabled: true,
                                             yAlign: 'bottom',
+                                            backgroundColor: 'rgba(15, 23, 42, 0.95)',
+                                            titleColor: '#f97316',
+                                            bodyColor: '#f3f4f6',
+                                            borderColor: '#374151',
+                                            borderWidth: 1,
+                                            padding: 8,
+                                            displayColors: false,
                                             callbacks: {
                                                 title: function(context) {
-                                                    return `Date (Abscisse) : ${context[0].label}`;
+                                                    return context[0].label; // Affiche Mois Année dans l'infobulle
                                                 },
                                                 label: function(context) {
-                                                    return `Prix (Ordonnée) : ${context.raw} €`;
+                                                    return `Prix : ${context.raw} €`; // Affiche Prix dans l'infobulle
                                                 }
                                             }
                                         } 
                                     },
                                     scales: {
-                                        x: { display: false },
-                                        y: { display: false }
+                                        x: { 
+                                            display: true, 
+                                            ticks: { 
+                                                color: '#9ca3af', 
+                                                font: { size: 8 },
+                                                maxRotation: 0,
+                                                autoSkip: true,
+                                                maxTicksLimit: 4
+                                            },
+                                            grid: { display: false }
+                                        },
+                                        y: { 
+                                            display: true, 
+                                            ticks: { 
+                                                color: '#9ca3af', 
+                                                font: { size: 8 },
+                                                maxTicksLimit: 3,
+                                                callback: function(value) {
+                                                    return value + '€';
+                                                }
+                                            },
+                                            grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                                        }
                                     }
                                 }
                             });
