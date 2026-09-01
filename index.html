@@ -52,26 +52,24 @@
             </div>
 
             <div class="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden shadow-xl mb-12">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse min-w-[1300px]">
-                        <thead>
-                            <tr class="border-b border-gray-800 text-xs uppercase tracking-wider text-gray-400 bg-gray-900/80">
-                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('name')">Objectif (Réf.)</th>
-                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('brand')">Marque</th>
-                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('mount')">Monture</th>
-                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('type')">Type</th>
-                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('aperture')">Ouverture</th>
-                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('dxoScore')">DXOMark Score</th>
-                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('newPriceVal')">Neuf</th>
-                                <th class="p-4 cursor-pointer hover:text-white transition select-none" onclick="sortTable('usedPriceVal')">Occasion</th>
-                                <th class="p-4 w-72">Historique Prix</th>
-                                <th class="p-4 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="lensTableBody" class="divide-y divide-gray-800 text-sm">
-                        </tbody>
-                    </table>
-                </div>
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-gray-800 text-xs uppercase tracking-wider text-gray-400 bg-gray-900/80">
+                            <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('name')">Objectif (Réf.)</th>
+                            <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('brand')">Marque</th>
+                            <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('mount')">Monture / Format</th>
+                            <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('type')">Type</th>
+                            <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('aperture')">Ouverture</th>
+                            <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('dxoScore')">DXOMark</th>
+                            <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('newPriceVal')">Neuf</th>
+                            <th class="p-3.5 cursor-pointer hover:text-white transition select-none" onclick="sortTable('usedPriceVal')">Occasion</th>
+                            <th class="p-3.5 w-40">Historique Prix</th>
+                            <th class="p-3.5 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lensTableBody" class="divide-y divide-gray-800 text-sm">
+                    </tbody>
+                </table>
             </div>
         </main>
     </div>
@@ -82,7 +80,7 @@
                 name: "Sony FE 24-70mm F2.8 GM II",
                 ref: "SEL2470GM2",
                 brand: "Sony",
-                mount: "E-mount (Full Frame)",
+                mount: "FE (Full Frame)",
                 type: "zoom",
                 aperture: "f/2.8",
                 dxoScore: 45,
@@ -102,7 +100,7 @@
                 name: "Sigma 85mm F1.4 DG DN Art",
                 ref: "322965",
                 brand: "Sigma",
-                mount: "E-mount (Full Frame)",
+                mount: "FE (Full Frame)",
                 type: "prime",
                 aperture: "f/1.4",
                 dxoScore: 51,
@@ -122,7 +120,7 @@
                 name: "Tamron 17-70mm F/2.8 Di III-A VC RXD",
                 ref: "B070",
                 brand: "Tamron",
-                mount: "E-mount (APS-C)",
+                mount: "E (APS-C)",
                 type: "zoom",
                 aperture: "f/2.8",
                 dxoScore: 39,
@@ -169,20 +167,20 @@
                 const scoreDisplay = lens.dxoScore ? `${lens.dxoScore} <span class="text-xs text-gray-500 font-normal">/ 100</span>` : '-';
 
                 row.innerHTML = `
-                    <td class="p-4 font-medium text-white">${lens.name || '-'}${refDisplay}</td>
-                    <td class="p-4 text-gray-300">${lens.brand || '-'}</td>
-                    <td class="p-4 text-gray-300"><span class="bg-gray-800 text-gray-300 text-xs px-2 py-1 rounded font-mono">${lens.mount || 'E-mount'}</span></td>
-                    <td class="p-4 text-gray-400">${lens.type || '-'}</td>
-                    <td class="p-4 text-gray-300">${lens.aperture || '-'}</td>
-                    <td class="p-4 font-semibold text-orange-400">${scoreDisplay}</td>
-                    <td class="p-4 text-gray-200">${lens.newPrice || 'N/C'}</td>
-                    <td class="p-4 text-gray-300">${lens.usedPrice || 'N/C'}</td>
-                    <td class="p-4">
-                        <div style="width: 180px; height: 45px; position: relative;">
+                    <td class="p-3.5 font-medium text-white">${lens.name || '-'}${refDisplay}</td>
+                    <td class="p-3.5 text-gray-300">${lens.brand || '-'}</td>
+                    <td class="p-3.5 text-gray-300"><span class="bg-gray-800 text-orange-400 font-bold text-xs px-2 py-1 rounded font-mono">${lens.mount || 'FE'}</span></td>
+                    <td class="p-3.5 text-gray-400">${lens.type || '-'}</td>
+                    <td class="p-3.5 text-gray-300">${lens.aperture || '-'}</td>
+                    <td class="p-3.5 font-semibold text-orange-400">${scoreDisplay}</td>
+                    <td class="p-3.5 text-gray-200">${lens.newPrice || 'N/C'}</td>
+                    <td class="p-3.5 text-gray-300">${lens.usedPrice || 'N/C'}</td>
+                    <td class="p-3.5">
+                        <div style="width: 120px; height: 35px; position: relative;">
                             <canvas id="chart-${index}"></canvas>
                         </div>
                     </td>
-                    <td class="p-4 text-right"><a href="${lens.url || '#'}" target="_blank" class="text-orange-500 hover:text-orange-400 text-xs font-semibold">Voir</a></td>
+                    <td class="p-3.5 text-right"><a href="${lens.url || '#'}" target="_blank" class="text-orange-500 hover:text-orange-400 text-xs font-semibold">Voir</a></td>
                 `;
                 tableBody.appendChild(row);
 
@@ -205,7 +203,7 @@
                                     }]
                                 },
                                 options: {
-                                    responsive: false,
+                                    responsive: true,
                                     maintainAspectRatio: false,
                                     plugins: { 
                                         legend: { display: false }, 
